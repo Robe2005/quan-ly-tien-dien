@@ -13,7 +13,7 @@
 
 :root {
   --navy: #0f1b2d;
-  --navy-mid: #1a2d47;
+  --navy-mid: #15243a;
   --navy-light: #243b5a;
   --accent: #3b82f6;
   --accent-glow: #60a5fa;
@@ -69,9 +69,9 @@ body {
 .header-sub { font-size: 11px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
 
 .upload-btn-header {
-  background: rgba(100,116,139,0.4);
-  color: #fff;
-  border: 1px solid var(--border);
+  background: rgba(203,213,225,0.25);
+  color: #e2e8f0;
+  border: 1px solid rgba(203,213,225,0.3);
   padding: 7px 12px;
   border-radius: 8px;
   font-size: 12px;
@@ -83,7 +83,7 @@ body {
   flex-shrink: 0;
 }
 
-.upload-btn-header:active { background: rgba(100,116,139,0.6); }
+.upload-btn-header:active { background: rgba(203,213,225,0.4); }
 
 
 #fileInput { display: none; }
@@ -187,7 +187,7 @@ body {
   line-height: 1.1;
 }
 .stat-value-row { display: flex; align-items: baseline; gap: 7px; min-width: 0; justify-content: center; }
-.stat-value.blue { color: #6baed6; font-weight: 700; }
+.stat-value.blue { color: #06b6d4; font-weight: 700; }
 .stat-value.gold { color: #eab308; font-weight: 700; }
 .stat-value.red { color: #e07070; font-weight: 700; }
 .stat-value.green { color: #4ade80; font-weight: 700; }
@@ -238,7 +238,7 @@ body {
   position: sticky;
   top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
   z-index: 150;
-  background: rgba(15,27,45,0.95);
+  background: rgba(10,18,30,0.98);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -312,7 +312,7 @@ body {
   touch-action: manipulation;
 }
 .sort-btn .sort-arrow { font-size: 12px; color: var(--text-dim); }
-.sort-btn.active { border-color: #1d4ed8; background: #1d4ed8; color: #fff; }
+.sort-btn.active { border-color: #166534; background: #166534; color: #e2e8f0; }
 .sort-btn.active .sort-arrow { color: #fff; }
 .sort-btn:active { background: rgba(59,130,246,0.22); }
 
@@ -337,7 +337,7 @@ body {
   user-select: none;
 }
 .kh-card:active { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
-.kh-card.highlighted { background: rgba(29,78,216,0.55); border-color: rgba(29,78,216,0.9); }
+.kh-card.highlighted { background: rgba(37,99,235,0.2); border-color: rgba(37,99,235,0.5); }
 
 .kh-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
 .kh-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
@@ -345,7 +345,7 @@ body {
 .kh-tien { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #fca5a5; white-space: nowrap; flex-shrink: 0; }
 .kh-thang { font-size: 11px; color: var(--accent-glow); margin-top: 2px; font-weight: 500; }
 
-.kh-card-mid { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+.kh-card-mid { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
 .kh-ma { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--accent-glow); font-weight: 500; }
 .kh-phone { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-dim); font-weight: 500; text-decoration: none; }
 .kh-card-mid .badge { font-size: 13px; font-weight: 500; }
@@ -503,8 +503,9 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
   white-space: nowrap;
 }
 .tab-btn.active {
-  background: #15803d;
-  color: #fff;
+  background: rgba(37,99,235,0.3);
+  color: #e2e8f0;
+  border: 1px solid rgba(37,99,235,0.5);
 }
 .tab-btn:active { opacity: 0.8; }
 
@@ -541,7 +542,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--text);
+  color: #38bdf8;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
   cursor: pointer;
@@ -608,7 +609,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 .modal-overlay.open { display: flex; }
 
 .modal {
-  background: var(--navy-mid);
+  background: #0a1220;
   border: 1px solid var(--border);
   border-radius: 20px 20px 0 0;
   width: 100%;
@@ -790,8 +791,8 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
 
     <!-- Tab Nav (scrolls away) -->
     <div class="tab-nav" id="tabNav">
-      <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết</button>
-      <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp tồn nợ</button>
+      <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết nợ</button>
+      <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp nợ</button>
     </div>
 
     <!-- Toolbar (sticky) -->
@@ -821,7 +822,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
     </div>
 
     <div class="count-info" style="margin-bottom:10px">
-      Hiển thị <span id="countDisplay">0</span> / <span id="countTotal">0</span> bản ghi
+      Hiển thị <span id="countDisplay">0</span> / <span id="countTotal">0</span> hoá đơn
     </div>
 
     <!-- SUMMARY VIEW (Sheet 2) -->
@@ -846,7 +847,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
             <tbody id="summaryBody"></tbody>
             <tfoot id="summaryFoot" style="display:none">
               <tr>
-                <td style="text-align:left;font-weight:700;font-size:12px">TỔNG CỘNG</td>
+                <td style="text-align:left;font-weight:700;font-size:12px">TỔNG</td>
                 <td style="text-align:right;font-weight:700;font-size:12px" id="sumTotalHd"></td>
                 <td style="text-align:right;font-weight:700;font-size:12px" id="sumTotalKh"></td>
                 <td class="tien-no-cell" style="text-align:right;font-size:12px" id="sumTotalTien"></td>
@@ -1433,11 +1434,11 @@ function renderCards(q='') {
 
   list.innerHTML = pageData.map((r,i) => {
     const phone = r.dien_thoai && r.dien_thoai!='0' ? r.dien_thoai : '';
-    return `<div class="kh-card" data-idx="${start+i}" onclick="showDetail(${start+i})" onpointerdown="longPressStart(event, this)" onpointerup="longPressEnd(this)" onpointerleave="longPressEnd(this)" onpointercancel="longPressEnd(this)">
+    return `<div class="kh-card" data-ma="${esc(r.ma_khach_hang)}" onclick="showDetail(${start+i})" onpointerdown="longPressStart(event, this)" onpointerup="longPressEnd(this)" onpointerleave="longPressEnd(this)" onpointercancel="longPressEnd(this)">
       <div class="kh-card-top">
         <div class="kh-name">${hi(r.ten_khach_hang,q)||'—'}</div>
         <div class="kh-tien-col">
-          <div class="kh-tien">${fmt(r.tien_no)}₫</div>
+          <div class="kh-tien">${fmt(r.tien_no)}</div>
           ${r.thang_no ? `<div class="kh-thang">📅 ${hi(r.thang_no,q)}</div>` : ''}
         </div>
       </div>
@@ -1472,7 +1473,7 @@ function renderTable(q='') {
       <td class="cell-dim">${hi(r.ma_sogcs,q)||'—'}</td>
       <td class="cell-dim">${hi(r.danh_so,q)||'—'}</td>
       <td><span class="badge badge-blue">${hi(r.thang_no,q)||'—'}</span></td>
-      <td><span class="tien-no">${fmt(r.tien_no)} ₫</span></td>
+      <td><span class="tien-no">${fmt(r.tien_no)}</span></td>
       <td><span class="phone">${r.dien_thoai&&r.dien_thoai!='0' ? hi(r.dien_thoai,q) : '<span style="color:var(--text-dim)">—</span>'}</span></td>
       <td class="cell-dim">${hi(r.so_tbi,q)||'—'}</td>
       <td class="cell-ghi">${hi(r.ghi_chu,q)||'—'}</td>
@@ -1522,7 +1523,7 @@ function goPage(p) {
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// Long press handler with persistence
+// Long press handler with persistence (by customer code)
 let longPressTimer = null;
 const HIGHLIGHT_KEY = 'qlno_highlighted';
 function getHighlightedIds() {
@@ -1533,13 +1534,13 @@ function saveHighlightedIds(ids) {
 }
 function longPressStart(e, el) {
   longPressTimer = setTimeout(() => {
-    const idx = el.dataset.idx;
+    const ma = el.dataset.ma;
     el.classList.toggle('highlighted');
     let ids = getHighlightedIds();
     if (el.classList.contains('highlighted')) {
-      if (!ids.includes(idx)) ids.push(idx);
+      if (!ids.includes(ma)) ids.push(ma);
     } else {
-      ids = ids.filter(id => id !== idx);
+      ids = ids.filter(id => id !== ma);
     }
     saveHighlightedIds(ids);
     longPressTimer = null;
@@ -1554,7 +1555,7 @@ function longPressEnd(el) {
 function restoreHighlights() {
   const ids = getHighlightedIds();
   document.querySelectorAll('.kh-card').forEach(card => {
-    if (ids.includes(card.dataset.idx)) card.classList.add('highlighted');
+    if (ids.includes(card.dataset.ma)) card.classList.add('highlighted');
   });
 }
 
@@ -1578,7 +1579,7 @@ function showDetail(idx) {
     ['Mã Số GCS', esc(r.ma_sogcs)||'—'],
     ['Danh Số', esc(r.danh_so)||'—'],
     ['Tháng', r.thang_no ? `<span class="badge badge-blue">${esc(r.thang_no)}</span>` : '—'],
-    ['Tiền nợ', `<span class="tien-no" style="font-size:18px">${fmt(r.tien_no)} ₫</span>`],
+    ['Tiền nợ', `<span class="tien-no" style="font-size:18px">${fmt(r.tien_no)}</span>`],
     ['SĐT', phoneHtml],
     ['Số TBi', esc(r.so_tbi)||'—'],
     ['Ghi chú', esc(r.ghi_chu)||'—'],
