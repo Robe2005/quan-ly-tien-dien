@@ -1037,6 +1037,7 @@ async function saveData() {
 
 async function clearSavedData() {
   try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  try { localStorage.removeItem(HIGHLIGHT_KEY); } catch(e) {}
   try { await dbClear(); } catch(e) {}
   allData = []; filtered = [];
   nvScope = ''; currentPage = 1;
@@ -1390,6 +1391,7 @@ function applyFilters() {
   renderTable(q2);
   renderPagination();
   updateStats();
+  restoreHighlights();
 }
 
 function sortBy(col) {
@@ -1431,7 +1433,7 @@ function renderCards(q='') {
 
   list.innerHTML = pageData.map((r,i) => {
     const phone = r.dien_thoai && r.dien_thoai!='0' ? r.dien_thoai : '';
-    return `<div class="kh-card" onclick="showDetail(${start+i})" onpointerdown="longPressStart(event, this)" onpointerup="longPressEnd(this)" onpointerleave="longPressEnd(this)" onpointercancel="longPressEnd(this)">
+    return `<div class="kh-card" data-idx="${start+i}" onclick="showDetail(${start+i})" onpointerdown="longPressStart(event, this)" onpointerup="longPressEnd(this)" onpointerleave="longPressEnd(this)" onpointercancel="longPressEnd(this)">
       <div class="kh-card-top">
         <div class="kh-name">${hi(r.ten_khach_hang,q)||'—'}</div>
         <div class="kh-tien-col">
@@ -1516,14 +1518,30 @@ function goPage(p) {
   currentPage = p;
   const q = document.getElementById('searchInput').value.trim();
   renderCards(q); renderTable(q); renderPagination();
+  restoreHighlights();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// Long press handler
+// Long press handler with persistence
 let longPressTimer = null;
+const HIGHLIGHT_KEY = 'qlno_highlighted';
+function getHighlightedIds() {
+  try { return JSON.parse(localStorage.getItem(HIGHLIGHT_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveHighlightedIds(ids) {
+  try { localStorage.setItem(HIGHLIGHT_KEY, JSON.stringify(ids)); } catch(e) {}
+}
 function longPressStart(e, el) {
   longPressTimer = setTimeout(() => {
+    const idx = el.dataset.idx;
     el.classList.toggle('highlighted');
+    let ids = getHighlightedIds();
+    if (el.classList.contains('highlighted')) {
+      if (!ids.includes(idx)) ids.push(idx);
+    } else {
+      ids = ids.filter(id => id !== idx);
+    }
+    saveHighlightedIds(ids);
     longPressTimer = null;
   }, 1000);
 }
@@ -1532,6 +1550,12 @@ function longPressEnd(el) {
     clearTimeout(longPressTimer);
     longPressTimer = null;
   }
+}
+function restoreHighlights() {
+  const ids = getHighlightedIds();
+  document.querySelectorAll('.kh-card').forEach(card => {
+    if (ids.includes(card.dataset.idx)) card.classList.add('highlighted');
+  });
 }
 
 function showDetail(idx) {
