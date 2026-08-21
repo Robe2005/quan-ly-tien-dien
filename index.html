@@ -25,7 +25,7 @@
   --border: rgba(255,255,255,0.08);
   --card: rgba(255,255,255,0.04);
   --radius: 12px;
-  --header-h: 64px;
+  --header-h: 44px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -57,24 +57,24 @@ body {
 .header-left { display: flex; align-items: center; gap: 10px; }
 
 .logo-icon {
-  width: 36px; height: 36px;
+  width: 28px; height: 28px;
   background: linear-gradient(135deg, var(--accent), #1d4ed8);
-  border-radius: 9px;
+  border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 14px;
   flex-shrink: 0;
 }
 
-.header-title { font-size: 15px; font-weight: 700; }
-.header-sub { font-size: 11px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.header-title { font-size: 14px; font-weight: 700; }
+.header-sub { font-size: 10px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 
 .upload-btn-header {
   background: rgba(203,213,225,0.25);
   color: #e2e8f0;
   border: 1px solid rgba(203,213,225,0.3);
-  padding: 7px 12px;
+  padding: 5px 10px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   display: flex; align-items: center; gap: 5px;
@@ -250,9 +250,9 @@ body {
   background: rgba(71,85,105,0.35);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 9px 12px 9px 36px;
+  padding: 6px 12px 6px 36px;
   color: var(--text);
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'Inter', sans-serif;
   outline: none;
   transition: border-color 0.2s;
@@ -268,9 +268,9 @@ body {
   background: rgba(71,85,105,0.35);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 6px 12px;
   color: var(--text);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   outline: none;
@@ -701,7 +701,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
 
 /* Mobile-only refinements */
 @media (max-width: 639.98px) {
-  .filter-select { font-size: 14px; padding-top: 9px; padding-bottom: 9px; }
+  .filter-select { font-size: 13px; padding-top: 6px; padding-bottom: 6px; }
   .kh-name { font-size: 14px; }
   .kh-tien { font-size: 15px; }
   .page-btn { width: 38px; height: 38px; font-size: 13px; }
@@ -812,7 +812,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
         </div>
         <div class="tab-nav" id="tabNav">
           <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết nợ</button>
-          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ cũ, >2 HĐ</button>
+          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ cũ,>2 HĐ</button>
           <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp nợ</button>
         </div>
       </div>
