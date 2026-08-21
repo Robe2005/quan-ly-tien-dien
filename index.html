@@ -266,7 +266,7 @@ body {
 .filter-select {
   flex: 1;
   background: rgba(71,85,105,0.35);
-  border: 1.5px solid #1e40af;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 12px;
   color: var(--text);
@@ -288,7 +288,7 @@ body {
 }
 
 /* Sort quick-buttons */
-.sort-row { display: flex; gap: 6px; margin-top: 2px; }
+.sort-row { display: flex; gap: 4px; margin-top: 2px; }
 .sort-btn {
   flex: 1;
   display: flex;
@@ -298,10 +298,10 @@ body {
   background: rgba(71,85,105,0.35);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 6px;
+  padding: 6px 4px;
   white-space: nowrap;
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
@@ -322,7 +322,7 @@ body {
 .count-info span { color: var(--accent-glow); font-weight: 600; }
 
 /* ── CARD LIST (mobile view) ─────────────── */
-.card-list { display: flex; flex-direction: column; gap: 6px; }
+.card-list { display: flex; flex-direction: column; gap: 10px; }
 
 .kh-card {
   background: rgba(71,85,105,0.25);
@@ -337,7 +337,8 @@ body {
 .kh-card:active { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
 .kh-card.highlighted { background: rgba(251,146,60,0.25); border-color: rgba(251,146,60,0.5); }
 
-.kh-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.kh-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+.kh-danhso { font-size: 11px; color: var(--accent-glow); font-weight: 600; margin-bottom: 4px; }
 .kh-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
 .kh-tien-col { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
 .kh-tien { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #ffa0a0; white-space: nowrap; flex-shrink: 0; }
@@ -345,12 +346,17 @@ body {
 .kh-tien.mid { color: #fde68a; }
 .kh-thang { font-size: 11px; color: #94a3b8; margin-top: 2px; font-weight: 500; }
 
+.kh-ma-line { margin-bottom: 4px; }
 .kh-card-mid { display: flex; gap: 8px; flex-wrap: nowrap; margin-bottom: 5px; align-items: center; overflow: hidden; }
 .kh-ma { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent-glow); font-weight: 500; white-space: nowrap; }
 .kh-sogcs { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
 .kh-phone { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; text-decoration: none; white-space: nowrap; }
 .kh-card-mid .badge { font-size: 12px; font-weight: 500; white-space: nowrap; }
 .kh-card-mid .badge-danhso { background: rgba(59,130,246,0.15); color: #fff; }
+.kh-ma-line .badge-danhso { font-size: 11px; padding: 3px 10px; color: #fff; border: none !important; box-shadow: none !important; }
+.kh-ghichu { font-size: 11px; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
+.ghi-chu-input { background: rgba(71,85,105,0.35); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif; width: 100%; outline: none; }
+.ghi-chu-input:focus { border-color: var(--accent); }
 
 .kh-addr-line { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kh-card-bot { display: flex; justify-content: space-between; align-items: center; }
@@ -490,7 +496,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 .tab-btn {
   flex: 1;
   padding: 6px 6px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 8px;
   background: rgba(51,65,85,0.4);
   color: var(--text-dim);
@@ -806,7 +812,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
         </div>
         <div class="tab-nav" id="tabNav">
           <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết nợ</button>
-          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ cũ</button>
+          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ cũ, >2 HĐ</button>
           <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp nợ</button>
         </div>
       </div>
@@ -815,7 +821,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
             <span class="sort-label">🔢 Danh số</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortSoGCS" onclick="sortBy('ma_sogcs')">
-            <span class="sort-label">🔢 Mã GCS</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">🔢 Mã Sổ</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortTienNo" onclick="sortBy('tien_no')">
             <span class="sort-label">💰 Tiền nợ</span><span class="sort-arrow">↕</span>
@@ -1134,7 +1140,7 @@ async function restoreData() {
 
   document.getElementById('welcomeState').style.display = 'none';
   document.getElementById('dataView').style.display = 'block';
-  initFilters(); updateStats(); applyFilters();
+  loadGhiChu(); initFilters(); updateStats(); applyFilters();
   if (!summaryData.length) computeSummaryFromDetail();
   else renderSummary();
 }
@@ -1286,7 +1292,7 @@ function processFile(file) {
         renderSummary();
       }
 
-      initFilters(); updateStats(); applyFilters();
+      loadGhiChu(); initFilters(); updateStats(); applyFilters();
       saveData();
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('dataView').style.display = 'block';
@@ -1424,7 +1430,18 @@ function applyFilters() {
   filtered = allData.filter(r => {
     if (nhom && r.ma_nhom !== nhom) return false;
     if (nvScope && r.nhan_vien !== nvScope) return false;
-    if (currentTab === 'old' && r.thang_no === '1-7/2026') return false;
+    if (currentTab === 'old') {
+      // Include 1-7/2026 only if customer also has debt in other months (non 1-7/2026)
+      if (r.thang_no === '1-7/2026') {
+        const hasOther = allData.some(x => x.ma_khach_hang === r.ma_khach_hang && x.thang_no !== '1-7/2026');
+        if (!hasOther) return false;
+      }
+      // Include 1-7/2027 only if customer also has debt in other months
+      if (r.thang_no === '1-7/2027') {
+        const hasOther = allData.some(x => x.ma_khach_hang === r.ma_khach_hang && x.thang_no !== '1-7/2026' && x.thang_no !== '1-7/2027');
+        if (!hasOther) return false;
+      }
+    }
     if (q) {
       const hay = normVn(r.stt+r.ma_khach_hang+r.ten_khach_hang+r.dia_chi+r.ma_sogcs+r.danh_so+r.dien_thoai+r.thang_no+r.so_tbi+r.ghi_chu+r.nhan_vien);
       if (!hay.includes(q)) return false;
@@ -1501,14 +1518,15 @@ function renderCards(q='') {
           ${r.thang_no ? `<div class="kh-thang">📅 ${hi(r.thang_no,q)}</div>` : ''}
         </div>
       </div>
+      ${r.danh_so ? `<div class="kh-danhso">${hi(r.danh_so,q)}</div>` : ''}
+
       <div class="kh-card-mid">
-        ${r.danh_so ? `<span class="badge badge-blue badge-danhso">${hi(r.danh_so,q)}</span>` : ''}
-        <span class="kh-ma">${hi(r.ma_khach_hang,q)}</span>
         ${r.ma_sogcs ? `<span class="kh-sogcs">${hi(r.ma_sogcs,q)}</span>` : ''}
+        <span class="kh-ma">${hi(r.ma_khach_hang,q)}</span>
         ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">📞 ${hi(phone,q)}</a>` : ''}
+        ${r.ghi_chu ? `<span class="kh-ghichu">📝 ${hi(r.ghi_chu,q)}</span>` : ''}
       </div>
       ${r.dia_chi ? `<div class="kh-addr-line">📍 ${hi(r.dia_chi,q)}</div>` : ''}
-      ${r.ghi_chu ? `<div class="kh-addr-line">📝 ${hi(r.ghi_chu,q)}</div>` : ''}
     </div>`;
   }).join('');
 }
@@ -1645,7 +1663,7 @@ function showDetail(idx) {
     ['Tiền nợ', `<span class="tien-no" style="font-size:18px">${fmt(r.tien_no)}</span>`],
     ['SĐT', phoneHtml],
     ['Số TBi', esc(r.so_tbi)||'—'],
-    ['Ghi chú', esc(r.ghi_chu)||'—'],
+    ['Ghi chú', `<input type="text" class="ghi-chu-input" value="${esc(r.ghi_chu||'')}" data-ma="${esc(r.ma_khach_hang)}" placeholder="Nhập ghi chú..." oninput="saveGhiChu(this)">`],
     ['Nhóm', r.ma_nhom ? `<span class="badge ${getBadge(r.ma_nhom)}">${esc(r.ma_nhom)}</span>` : '—'],
   ];
 
@@ -1653,8 +1671,29 @@ function showDetail(idx) {
     `<div class="info-row"><div class="info-label">${l}</div><div class="info-value">${v}</div></div>`
   ).join('');
 
+  // Focus ghi chú input
+  const gcInput = document.querySelector('.ghi-chu-input');
+  if (gcInput) gcInput.focus();
+
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+// Save/load ghi chú
+function saveGhiChu(input) {
+  const ma = input.dataset.ma;
+  const val = input.value;
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem('qlno_notes') || '{}'); } catch(e) {}
+  notes[ma] = val;
+  localStorage.setItem('qlno_notes', JSON.stringify(notes));
+  // Update allData
+  allData.forEach(r => { if (r.ma_khach_hang === ma) r.ghi_chu = val; });
+}
+function loadGhiChu() {
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem('qlno_notes') || '{}'); } catch(e) {}
+  allData.forEach(r => { if (notes[r.ma_khach_hang]) r.ghi_chu = notes[r.ma_khach_hang]; });
 }
 
 function closeModal(e) { if (e.target===document.getElementById('modal')) closeModalDirect(); }
