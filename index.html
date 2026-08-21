@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1b2d">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Quản Lý Nợ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --navy: #0f1b2d;
+  --navy-mid: #1a2d47;
+  --navy-light: #243b5a;
+  --accent: #3b82f6;
+  --accent-glow: #60a5fa;
+  --gold: #f59e0b;
+  --red: #ef4444;
+  --green: #10b981;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --border: rgba(255,255,255,0.08);
+  --card: rgba(255,255,255,0.04);
+  --radius: 12px;
+  --header-h: 64px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+/* ── HEADER ─────────────────────────────── */
+.header {
+  background: linear-gradient(135deg, var(--navy-mid), #0d2137);
+  border-bottom: 1px solid var(--border);
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.header-left { display: flex; align-items: center; gap: 10px; }
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), #1d4ed8);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.header-title { font-size: 15px; font-weight: 700; }
+.header-sub { font-size: 11px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+
+.upload-btn-header {
+  background: rgba(100,116,139,0.4);
+  color: #fff;
+  border: 1px solid var(--border);
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  flex-shrink: 0;
+}
+
+.upload-btn-header:active { background: rgba(100,116,139,0.6); }
+
+
+#fileInput { display: none; }
+
+/* ── MAIN ───────────────────────────────── */
+.main { padding: 0 12px calc(100px + env(safe-area-inset-bottom, 0px)); max-width: 900px; margin: 0 auto; }
+
+.toolbar-top { display: flex; flex-direction: column; gap: 8px; }
+@media (min-width: 640px) {
+  .toolbar-top { flex-direction: row; align-items: stretch; flex-wrap: nowrap; }
+  .toolbar-top .search-box { flex: 0 1 auto; min-width: 0; }
+  .filter-row { flex: 0 0 auto; }
+  .sort-row { flex: 0 0 auto; gap: 6px; }
+  .sort-btn { padding: 10px 10px; font-size: 12px; flex: 0 0 auto; }
+  .sort-btn .sort-arrow { font-size: 11px; }
+  .sort-label { font-size: 12px; }
+}
+
+/* ── WELCOME ────────────────────────────── */
+.welcome-state {
+  text-align: center;
+  padding: 60px 16px;
+}
+.welcome-state .big-icon { font-size: 56px; margin-bottom: 16px; }
+.welcome-state h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.welcome-state p { font-size: 14px; color: var(--text-dim); line-height: 1.6; max-width: 320px; margin: 0 auto 24px; }
+
+.upload-zone-mobile {
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  cursor: pointer;
+  background: rgba(59,130,246,0.04);
+  transition: background 0.2s;
+}
+.upload-zone-mobile:active { background: rgba(59,130,246,0.1); }
+.upload-zone-mobile p { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+
+.big-upload-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.big-upload-btn:active { background: #2563eb; }
+
+/* ── LOADING ────────────────────────────── */
+.loading { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── STATS ──────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 14px 0;
+  max-height: 300px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+}
+.stats-row.collapsed { max-height: 0; opacity: 0; margin: 0; pointer-events: none; }
+.stat-card:first-child { grid-column: 1 / -1; }
+
+.stat-card {
+  background: rgba(71,85,105,0.25);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.stat-value-row { display: flex; align-items: baseline; gap: 7px; min-width: 0; justify-content: center; }
+.stat-value.blue { color: #5b9bd5; font-weight: 700; }
+.stat-value.gold { color: #d4a017; font-weight: 700; }
+.stat-value.red { color: #d96b6b; font-weight: 700; }
+.stat-value.green { color: #34c77b; font-weight: 700; }
+.stat-sub { font-size: 11px; font-weight: 600; color: var(--text-dim); white-space: nowrap; }
+
+/* Per-employee stats scope banner */
+.nv-scope {
+  display: none !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.35);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 0 0 8px;
+  font-size: 11px;
+  color: var(--text);
+  max-height: 40px;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease, padding 0.3s ease, border-width 0.3s ease;
+}
+.nv-scope.collapsed { max-height: 0; opacity: 0; margin: 0; padding-top: 0; padding-bottom: 0; border-width: 0; pointer-events: none; }
+.nv-scope b { color: var(--accent-glow); }
+.nv-scope button {
+  background: rgba(59,130,246,0.15);
+  color: var(--accent-glow);
+  border: 1px solid rgba(59,130,246,0.4);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nv-scope button:active { background: rgba(59,130,246,0.3); }
+
+/* ── TOOLBAR ────────────────────────────── */
+.toolbar {
+  margin: 0;
+  padding: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  z-index: 150;
+  background: rgba(15,27,45,0.95);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.toolbar.stuck { border-bottom-color: var(--border); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+
+.search-box { position: relative; }
+.search-box input {
+  width: 100%;
+  background: rgba(71,85,105,0.35);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px 9px 36px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box input::placeholder { color: var(--text-dim); }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px; pointer-events: none; }
+
+.filter-row { display: flex; gap: 8px; }
+.filter-select {
+  flex: 1;
+  background: rgba(71,85,105,0.35);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='%23e2e8f0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  min-width: 0;
+}
+.filter-select option {
+  background: var(--navy-mid);
+  color: var(--text);
+}
+
+/* Sort quick-buttons */
+.sort-row { display: flex; gap: 6px; margin-top: 2px; }
+.sort-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(71,85,105,0.35);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 6px;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.sort-btn .sort-arrow { font-size: 12px; color: var(--text-dim); }
+.sort-btn.active { border-color: #1d4ed8; background: #1d4ed8; color: #fff; }
+.sort-btn.active .sort-arrow { color: #fff; }
+.sort-btn:active { background: rgba(59,130,246,0.22); }
+
+.count-info {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 0 2px;
+}
+.count-info span { color: var(--accent-glow); font-weight: 600; }
+
+/* ── CARD LIST (mobile view) ─────────────── */
+.card-list { display: flex; flex-direction: column; gap: 8px; }
+
+.kh-card {
+  background: rgba(71,85,105,0.25);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.kh-card:active { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
+.kh-card.highlighted { background: rgba(29,78,216,0.55); border-color: rgba(29,78,216,0.9); }
+
+.kh-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.kh-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
+.kh-tien-col { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.kh-tien { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #fca5a5; white-space: nowrap; flex-shrink: 0; }
+.kh-thang { font-size: 11px; color: var(--accent-glow); margin-top: 2px; font-weight: 500; }
+
+.kh-card-mid { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+.kh-ma { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--accent-glow); font-weight: 500; }
+.kh-phone { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-dim); font-weight: 500; text-decoration: none; }
+.kh-card-mid .badge { font-size: 13px; font-weight: 500; }
+.kh-card-mid .badge-danhso { background: rgba(59,130,246,0.15); color: #fff; }
+
+.kh-addr-line { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kh-card-bot { display: flex; justify-content: space-between; align-items: center; }
+.kh-nv { font-size: 11px; color: var(--text-dim); }
+.kh-thang { font-size: 11px; color: var(--accent-glow); font-weight: 500; }
+
+/* Clickable employee name → per-NV stats */
+.nv-link {
+  color: var(--accent-glow);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  padding: 4px 2px;
+  margin: -4px -2px;
+}
+.nv-link:active { opacity: 0.7; }
+
+
+
+/* ── TABLE (desktop view) ───────────────── */
+.table-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+colgroup col:nth-child(1) { width: 3%; }  /* STT */
+colgroup col:nth-child(2) { width: 10%; } /* Mã KH */
+colgroup col:nth-child(3) { width: 20%; } /* Tên KH */
+colgroup col:nth-child(4) { width: 18%; } /* Địa chỉ */
+colgroup col:nth-child(5) { width: 9%; }  /* Mã Số GCS */
+colgroup col:nth-child(6) { width: 7%; }  /* Danh Số */
+colgroup col:nth-child(7) { width: 7%; }  /* Tháng */
+colgroup col:nth-child(8) { width: 10%; } /* Tiền Nợ */
+colgroup col:nth-child(9) { width: 8%; }  /* SĐT */
+colgroup col:nth-child(10) { width: 6%; } /* Số TBi */
+colgroup col:nth-child(11) { width: 5%; } /* Ghi Chú */
+colgroup col:nth-child(12) { width: 6%; } /* Nhóm */
+
+thead th {
+  background: rgba(255,255,255,0.04);
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+thead th:hover { color: var(--text); }
+thead th.sorted { color: var(--accent-glow); }
+
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; cursor: pointer; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ma-kh { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--accent-glow); font-weight: 500; }
+.ten-kh { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ten-kh small { display: block; font-size: 10px; color: var(--text-dim); font-weight: 400; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tien-no { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #fca5a5; white-space: nowrap; }
+.phone { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-dim); }
+.cell-dim { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
+.cell-addr { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cell-ghi { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cell-nv { font-size: 12px; white-space: nowrap; }
+
+/* ── BADGE ──────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.badge-blue { background: rgba(59,130,246,0.15); color: var(--accent-glow); }
+.badge-gold { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+.badge-teal { background: rgba(20,184,166,0.15); color: #2dd4bf; }
+.badge-rose { background: rgba(244,63,94,0.15); color: #fb7185; }
+.badge-green { background: rgba(16,185,129,0.15); color: var(--green); }
+.badge-orange { background: rgba(249,115,22,0.15); color: #fb923c; }
+.badge-gray { background: rgba(148,163,184,0.1); color: var(--text-dim); }
+
+/* ── PAGINATION ─────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.page-info { font-size: 12px; color: var(--text-dim); }
+.page-btns { display: flex; gap: 4px; }
+.page-btn {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.page-btn:active { background: rgba(255,255,255,0.06); }
+.page-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── TAB NAVIGATION ────────────────────── */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+  background: rgba(71,85,105,0.35);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn.active {
+  background: #15803d;
+  color: #fff;
+}
+.tab-btn:active { opacity: 0.8; }
+
+/* ── SUMMARY TABLE ─────────────────────── */
+.summary-wrap {
+  background: rgba(71,85,105,0.25);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.summary-table {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.summary-table col:nth-child(1) { width: 36px; }
+.summary-table col:nth-child(2) { width: 35%; }
+.summary-table col:nth-child(3) { width: 14%; }
+.summary-table col:nth-child(4) { width: 14%; }
+.summary-table col:nth-child(5) { width: 22%; }
+.summary-table th:nth-child(3),
+.summary-table td:nth-child(3),
+.summary-table th:nth-child(4),
+.summary-table td:nth-child(4),
+.summary-table th:nth-child(5),
+.summary-table td:nth-child(5) { text-align: right; }
+.summary-table th {
+  background: rgba(255,255,255,0.06);
+  padding: 8px 6px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.summary-table th:hover { color: var(--accent-glow); }
+.summary-table th.sorted { color: var(--accent-glow); }
+.sa-sum { font-size: 9px; color: var(--text-dim); margin-left: 1px; }
+.summary-table th.sorted .sa-sum { color: var(--accent-glow); }
+.summary-table td {
+  padding: 8px 6px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.summary-table td:nth-child(3),
+.summary-table td:nth-child(4) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-right: 6px;
+}
+.summary-table tr:last-child td { border-bottom: none; }
+.summary-table tr:hover { background: rgba(255,255,255,0.03); }
+.summary-table .tien-no-cell { font-weight: 700; color: #fca5a5; font-family: 'Inter', sans-serif; font-size: 12px; }
+.summary-table .num-cell { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+.summary-table .ten-nv-cell { font-weight: 600; color: var(--text); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.summary-table .stt-cell { color: var(--text-dim); font-size: 12px; }
+.summary-table tfoot td {
+  background: rgba(59,130,246,0.08);
+  font-weight: 700;
+  font-size: 13px;
+  border-top: 2px solid var(--accent);
+  color: var(--accent-glow);
+  padding: 10px 6px;
+  white-space: nowrap;
+  overflow: visible;
+}
+.summary-table tfoot td:first-child {
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+/* ── EMPTY ──────────────────────────────── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-dim); }
+.empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+.empty-state p { font-size: 13px; }
+
+/* ── MODAL ──────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 300;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* desktop: center modal */
+@media (min-width: 640px) {
+  .modal-overlay { align-items: center; padding: 24px; }
+  .modal { border-radius: 16px; max-height: 80vh; }
+}
+
+@keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.modal-header h2 { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.modal-header p { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+.modal-close {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 8px;
+  line-height: 1;
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.modal-body { padding: 8px 20px 28px; }
+
+.info-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-dim); min-width: 100px; margin-top: 2px; flex-shrink: 0; }
+.info-value { font-size: 14px; color: var(--text); flex: 1; word-break: break-word; }
+
+/* Phone call link */
+.call-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,0.12);
+  color: var(--green);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  margin-top: 4px;
+}
+
+mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; padding: 0 1px; }
+
+/* ── RESPONSIVE ─────────────────────────── */
+/* Mobile: cards */
+.card-view { display: block; }
+.table-view { display: none; }
+
+/* Mobile-only refinements */
+@media (max-width: 639.98px) {
+  .filter-select { font-size: 14px; padding-top: 9px; padding-bottom: 9px; }
+  .kh-name { font-size: 14px; }
+  .kh-tien { font-size: 15px; }
+  .page-btn { width: 38px; height: 38px; font-size: 13px; }
+  .page-btns { flex-wrap: wrap; justify-content: center; }
+  .modal-close { padding: 10px 12px; font-size: 18px; }
+  .modal { padding-bottom: env(safe-area-inset-bottom, 0px); }
+}
+
+/* Desktop: table */
+@media (min-width: 640px) {
+  .card-view { display: none; }
+  .table-view { display: block; }
+  .main { padding: 0 20px 40px; }
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .stat-card:first-child { grid-column: auto; }
+  .toolbar { flex-direction: column; gap: 8px; }
+  .search-box { width: 100%; }
+  .toolbar-top { display: flex; gap: 8px; align-items: center; }
+  .toolbar-top .search-box { flex: 1; }
+  .filter-row { flex-wrap: nowrap; gap: 8px; }
+  .filter-select { flex: 0 0 auto; }
+  .header-sub { max-width: 300px; }
+}
+
+@media (min-width: 900px) {
+  .main { padding: 0 16px 40px; max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-icon">💰</div>
+    <div>
+      <div class="header-title">Quản Lý Nợ</div>
+      <div class="header-sub" id="fileLabel">Chưa có dữ liệu</div>
+    </div>
+  </div>
+  <button class="upload-btn-header" onclick="document.getElementById('fileInput').click()">
+    <span style="color:#3b82f6">📂</span> Chọn file
+  </button>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(this)">
+</div>
+
+<div class="main" id="mainContent">
+
+  <!-- WELCOME -->
+  <div class="welcome-state" id="welcomeState">
+    <div class="big-icon">📊</div>
+    <h2>Tải dữ liệu để bắt đầu</h2>
+    <p>Nhập danh sách nợ khách hàng từ file Excel để xem và tìm kiếm</p>
+    <div class="upload-zone-mobile" onclick="document.getElementById('fileInput').click()">
+      <p>📥 Hỗ trợ .xlsx · .xls · .csv</p>
+      <button class="big-upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
+        📂 Chọn file Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loadingState" style="display:none">
+    <div class="spinner"></div>
+    <p>Đang xử lý dữ liệu...</p>
+  </div>
+
+  <!-- DATA VIEW -->
+  <div id="dataView" style="display:none">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Tổng nợ</div>
+        <div class="stat-value-row">
+          <div class="stat-value gold tong-no" id="statTongNo">0</div>
+          <div class="stat-sub">VNĐ</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tổng hoá đơn nợ</div>
+        <div class="stat-value blue" id="statTotal">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tổng khách hàng nợ</div>
+        <div class="stat-value green" id="statUnique">0</div>
+      </div>
+    </div>
+
+    <!-- Per-employee scope banner -->
+    <div class="nv-scope" id="nvScope">
+      <span>📊 <b id="nvScopeName"></b></span>
+      <button onclick="clearNvScope()">✕</button>
+    </div>
+
+    <!-- Tab Nav (scrolls away) -->
+    <div class="tab-nav" id="tabNav">
+      <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết</button>
+      <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp tồn nợ</button>
+    </div>
+
+    <!-- Toolbar (sticky) -->
+    <div class="toolbar">
+      <div class="toolbar-top">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Tìm tên, mã KH, SĐT, địa chỉ..." oninput="handleSearch()" autocomplete="off" autocorrect="off" autocapitalize="off">
+        </div>
+        <div class="filter-row">
+          <select class="filter-select" id="filterNhom" onchange="handleNhomFilter()">
+            <option value="">📁 Tất cả các nhóm</option>
+          </select>
+        </div>
+        <div class="sort-row">
+          <button class="sort-btn" id="sortDanhSo" onclick="sortBy('danh_so')">
+            <span class="sort-label">🔢 Danh số</span><span class="sort-arrow">↕</span>
+          </button>
+          <button class="sort-btn" id="sortTienNo" onclick="sortBy('tien_no')">
+            <span class="sort-label">💰 Tiền nợ</span><span class="sort-arrow">↕</span>
+          </button>
+          <button class="sort-btn" id="sortThang" onclick="sortBy('thang_no')">
+            <span class="sort-label">📅 Tháng</span><span class="sort-arrow">↕</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="count-info" style="margin-bottom:10px">
+      Hiển thị <span id="countDisplay">0</span> / <span id="countTotal">0</span> bản ghi
+    </div>
+
+    <!-- SUMMARY VIEW (Sheet 2) -->
+    <div id="summaryView" style="display:none">
+      <div class="summary-wrap">
+        <div class="table-scroll">
+          <table class="summary-table">
+            <colgroup>
+              <col style="width:40%">
+              <col style="width:16%">
+              <col style="width:16%">
+              <col style="width:28%">
+            </colgroup>
+            <thead>
+              <tr>
+                <th onclick="sortSummary('ten_nhom')">Nhóm <span class="sa-sum" data-col="ten_nhom">↕</span></th>
+                <th onclick="sortSummary('hoa_don')" style="text-align:right">HĐ NỢ <span class="sa-sum" data-col="hoa_don">↕</span></th>
+                <th onclick="sortSummary('khach_hang')" style="text-align:right">KH NỢ <span class="sa-sum" data-col="khach_hang">↕</span></th>
+                <th onclick="sortSummary('tien_no')" style="text-align:right">Tiền Nợ <span class="sa-sum" data-col="tien_no">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="summaryBody"></tbody>
+            <tfoot id="summaryFoot" style="display:none">
+              <tr>
+                <td style="text-align:left;font-weight:700;font-size:12px">TỔNG CỘNG</td>
+                <td style="text-align:right;font-weight:700;font-size:12px" id="sumTotalHd"></td>
+                <td style="text-align:right;font-weight:700;font-size:12px" id="sumTotalKh"></td>
+                <td class="tien-no-cell" style="text-align:right;font-size:12px" id="sumTotalTien"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL VIEW (Sheet 1) -->
+    <div id="detailView">
+
+    <!-- MOBILE: Card list -->
+    <div class="card-view">
+      <div class="card-list" id="cardList"></div>
+      <div id="emptyStateCard" class="empty-state" style="display:none">
+        <div class="icon">🔎</div><p>Không tìm thấy kết quả</p>
+      </div>
+      <div class="pagination" id="paginationCard">
+        <div class="page-info" id="pageInfoCard"></div>
+        <div class="page-btns" id="pageBtnsCard"></div>
+      </div>
+    </div>
+
+    <!-- DESKTOP: Table -->
+    <div class="table-view">
+      <div class="table-wrap">
+        <div class="table-scroll"><table>
+              <colgroup>
+                <col><col><col><col><col><col><col><col><col><col><col><col>
+              </colgroup>
+              <thead>
+              <tr>
+                <th onclick="sortBy('stt')">STT <span class="sa" data-col="stt">↕</span></th>
+                <th onclick="sortBy('ma_khach_hang')">Mã KH <span class="sa" data-col="ma_khach_hang">↕</span></th>
+                <th onclick="sortBy('ten_khach_hang')">Tên KH <span class="sa" data-col="ten_khach_hang">↕</span></th>
+                <th onclick="sortBy('dia_chi')">Địa chỉ <span class="sa" data-col="dia_chi">↕</span></th>
+                <th onclick="sortBy('ma_sogcs')">Mã Số GCS <span class="sa" data-col="ma_sogcs">↕</span></th>
+                <th onclick="sortBy('danh_so')">Danh Số <span class="sa" data-col="danh_so">↕</span></th>
+                <th onclick="sortBy('thang_no')">Tháng <span class="sa" data-col="thang_no">↕</span></th>
+                <th onclick="sortBy('tien_no')">Tiền Nợ <span class="sa" data-col="tien_no">↕</span></th>
+                <th onclick="sortBy('dien_thoai')">SĐT <span class="sa" data-col="dien_thoai">↕</span></th>
+                <th onclick="sortBy('so_tbi')">Số TBi <span class="sa" data-col="so_tbi">↕</span></th>
+                <th onclick="sortBy('ghi_chu')">Ghi Chú <span class="sa" data-col="ghi_chu">↕</span></th>
+                <th onclick="sortBy('ma_nhom')">Nhóm <span class="sa" data-col="ma_nhom">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div id="emptyStateTable" class="empty-state" style="display:none">
+          <div class="icon">🔎</div><p>Không tìm thấy kết quả</p>
+        </div>
+        <div class="pagination" id="paginationTable">
+          <div class="page-info" id="pageInfoTable"></div>
+          <div class="page-btns" id="pageBtnsTable"></div>
+        </div>
+      </div>
+    </div>
+
+    </div> <!-- end detailView -->
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <h2 id="modalName">Tên khách hàng</h2>
+        <p id="modalMa">Mã KH</p>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+let allData = [], filtered = [], summaryData = [];
+let nvScope = '';
+let sortCol = 'tien_no', sortDir = -1;
+let currentPage = 1;
+const PAGE_SIZE = 50;
+const SAVE_KEY = 'qlno_data_v1';
+const DB_NAME = 'qlno_db';
+const DB_STORE = 'qlno_data';
+const DB_KEY = 'qlno_data';
+
+// ── Storage helpers: gzip-compressed localStorage → IndexedDB fallback ──
+function bytesToBase64(bytes) {
+  let bin = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+function base64ToBytes(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+async function compressString(str) {
+  if (typeof CompressionStream === 'undefined') return null;
+  const stream = new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function decompressBytes(bytes) {
+  if (typeof DecompressionStream === 'undefined') return null;
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return new TextDecoder().decode(await new Response(stream).arrayBuffer());
+}
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (!('indexedDB' in window)) return reject(new Error('IndexedDB không khả dụng'));
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(DB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function dbSet(value) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).put(value, DB_KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  }));
+}
+function dbGet() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const req = tx.objectStore(DB_STORE).get(DB_KEY);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  }));
+}
+function dbClear() {
+  return openDB().then(db => new Promise(resolve => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).delete(DB_KEY);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  }));
+}
+
+// Persist the parsed data: compressed into localStorage, IndexedDB as fallback
+async function saveData() {
+  const payload = {
+    name: document.getElementById('fileLabel').textContent,
+    data: allData,
+    summary: summaryData
+  };
+  try {
+    const json = JSON.stringify(payload);
+    const compressed = await compressString(json);
+    // Strategy 1: gzip-compressed JSON in localStorage ('c:' marker)
+    if (compressed) {
+      try {
+        localStorage.setItem(SAVE_KEY, 'c:' + bytesToBase64(compressed));
+        dbClear().catch(() => {});
+        return;
+      } catch(e) { /* quota exceeded — fall through */ }
+    }
+    // Strategy 2: plain JSON in localStorage (small files, no CompressionStream)
+    try {
+      localStorage.setItem(SAVE_KEY, 'j:' + json);
+      dbClear().catch(() => {});
+      return;
+    } catch(e) { /* quota exceeded — fall through */ }
+  } catch(e) {
+    console.warn('Không thể nén/lưu dữ liệu:', e);
+  }
+  // Strategy 3: IndexedDB — handles very large files
+  try {
+    await dbSet(payload);
+    try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  } catch(e) {
+    console.warn('Không thể lưu dữ liệu vào bộ nhớ:', e);
+  }
+}
+
+async function clearSavedData() {
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  try { await dbClear(); } catch(e) {}
+  allData = []; filtered = [];
+  nvScope = ''; currentPage = 1;
+
+
+  document.getElementById('fileLabel').textContent = 'Chưa có dữ liệu';
+  document.getElementById('dataView').style.display = 'none';
+  document.getElementById('welcomeState').style.display = 'block';
+  document.querySelector('.stats-row').classList.remove('collapsed');
+  document.getElementById('nvScope').classList.remove('collapsed');
+  updateStats();
+}
+
+// Restore previously saved data on page load (async)
+async function restoreData() {
+  let saved = null;
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) {
+      if (raw.startsWith('c:')) {
+        const json = await decompressBytes(base64ToBytes(raw.slice(2)));
+        saved = json ? JSON.parse(json) : null;
+      } else if (raw.startsWith('j:')) {
+        saved = JSON.parse(raw.slice(2));
+      } else {
+        saved = JSON.parse(raw); // legacy plain JSON
+      }
+    }
+  } catch(e) { saved = null; }
+  if (!saved || !Array.isArray(saved.data) || saved.data.length === 0) {
+    // Fallback: IndexedDB
+    try { saved = await dbGet(); } catch(e) { saved = null; }
+  }
+  if (!saved || !Array.isArray(saved.data) || saved.data.length === 0) return;
+  allData = saved.data;
+  summaryData = saved.summary || [];
+  document.getElementById('fileLabel').textContent = saved.name || allData.length.toLocaleString('vi-VN') + ' bản ghi';
+
+
+  document.getElementById('welcomeState').style.display = 'none';
+  document.getElementById('dataView').style.display = 'block';
+  initFilters(); updateStats(); applyFilters();
+  if (!summaryData.length) computeSummaryFromDetail();
+  else renderSummary();
+}
+
+const nhomColors = {
+  'BR01':'badge-green','BR02':'badge-teal','BR03':'badge-blue',
+  'BR04':'badge-gold','BR05':'badge-purple','BR06':'badge-rose',
+  'PM05':'badge-orange','PM06':'badge-gray'
+};
+
+function getBadge(nhom) {
+  if (!nhom) return 'badge-gray';
+  return nhomColors[nhom.substring(0,4)] || 'badge-gray';
+}
+
+function fmt(n) {
+  if (!n || isNaN(n)) return '0';
+  return Math.round(n).toLocaleString('vi-VN');
+}
+// Parse amounts that may arrive as text in VN format: "1.234.567" or "1.234,56"
+function parseVnNumber(s) {
+  if (typeof s === 'number') return isNaN(s) ? 0 : s;
+  s = String(s ?? '').trim();
+  if (!s) return 0;
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(/,/g, '.');
+  else s = s.replace(/\./g, '');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+// HTML-escape data coming from Excel before injecting into the page
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// Lowercase without Vietnamese diacritics, for tolerant searching
+function normVn(s) { return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+function hi(text, q) {
+  if (text == null || text === '') return '';
+  const t = esc(text);
+  if (!q) return t;
+  const escRe = esc(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return t.replace(new RegExp(escRe, 'gi'), m => `<mark>${m}</mark>`);
+}
+
+function handleFileUpload(inp) {
+  if (inp.files[0]) {
+    processFile(inp.files[0]);
+    inp.value = ''; // allow re-selecting the same file later
+  }
+}
+
+function processFile(file) {
+  document.getElementById('welcomeState').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'block';
+  document.getElementById('dataView').style.display = 'none';
+  document.getElementById('fileLabel').textContent = file.name;
+
+  // Reset all state carried over from a previous file
+  nvScope = '';
+  currentPage = 1;
+  sortCol = 'tien_no'; sortDir = -1;
+  document.getElementById('searchInput').value = '';
+  document.querySelector('.stats-row').classList.remove('collapsed');
+  document.getElementById('nvScope').classList.remove('collapsed');
+  document.getElementById('filterNhom').value = '';
+  updateSortButtons();
+  document.querySelectorAll('.sa').forEach(el => { el.textContent = '↕'; el.closest('th').classList.remove('sorted'); });
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      if (typeof XLSX === 'undefined') throw new Error('Thư viện đọc Excel chưa được tải (kiểm tra kết nối mạng rồi thử lại).');
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+      const keys = Object.keys(rows[0] || {});
+
+      function fc(...names) {
+        for (const n of names) {
+          const f = keys.find(k =>
+            k.trim().toUpperCase()===n.toUpperCase() ||
+            k.replace(/[_\s]/g,'').toUpperCase()===n.replace(/[_\s]/g,'').toUpperCase()
+          );
+          if (f) return f;
+        }
+        return null;
+      }
+
+      const cStt    = fc('STT');
+      const cMa    = fc('MA_KHANG','MAKHANG','MA KH','MAKH');
+      const cTen   = fc('TEN_KHANG','TENKHANG','TEN KH','TENKH');
+      const cDchi  = fc('DCHI_KHANG','DCHIKHANG','DIA CHI','DIACHI');
+      const cSoGcs = fc('MA_SOGCS','MASOGCS','MA SO GCS');
+      const cDanhSo= fc('DANH SỐ','DANH SO','DANHSO');
+      const cDt    = fc('DTHOAI_DVU','DTHOAIDVU','SĐT','SDT','DIEN THOAI');
+      const cThang = fc('THANG NO','THANGNO','THANG_NO','THANG');
+      const cTien  = fc('TIEN NO','TIENNO','TIEN_NO','TIỀN NỢ');
+      const cSoTbi = fc('SO_TBI','SOTBI','SO TBI');
+      const cGhiChu= fc('GHI CHU','GHICHU','GHI CHÚ');
+      const cNV    = fc('NV','NHAN VIEN','NHANVIEN');
+      const cNhom  = fc('NHÓM','NHOM','MA NHOM','MANHOM');
+      const cMaNhom= fc('MA NHOM','MANHOM','MA_NHOM');
+
+      allData = rows.map(r => ({
+        stt: String(r[cStt]||'').trim(),
+        ma_khach_hang: String(r[cMa]||'').trim(),
+        ten_khach_hang: String(r[cTen]||'').trim(),
+        dia_chi: String(r[cDchi]||'').trim(),
+        ma_sogcs: String(r[cSoGcs]||'').trim(),
+        danh_so: String(r[cDanhSo]||'').trim(),
+        thang_no: String(r[cThang]||'').trim(),
+        tien_no: parseVnNumber(r[cTien]),
+        dien_thoai: String(r[cDt]||'').trim().replace(/\.0$/,''),
+        so_tbi: String(r[cSoTbi]||'').trim(),
+        ghi_chu: String(r[cGhiChu]||'').trim(),
+        nhan_vien: String(r[cNV]||'').trim(),
+        ma_nhom: String(r[cMaNhom]||r[cNhom]||'').trim(),
+      })).filter(r => r.ma_khach_hang || r.ten_khach_hang);
+
+      document.getElementById('fileLabel').textContent = `${file.name} · ${allData.length.toLocaleString()} bản ghi`;
+
+      // Read Sheet 2 (summary)
+      summaryData = [];
+      if (wb.SheetNames.length > 1) {
+        const ws2 = wb.Sheets[wb.SheetNames[1]];
+        const rows2 = XLSX.utils.sheet_to_json(ws2, {defval:''});
+        const keys2 = Object.keys(rows2[0] || {});
+        function fc2(...names) {
+          for (const n of names) {
+            const f = keys2.find(k =>
+              k.trim().toUpperCase()===n.toUpperCase() ||
+              k.replace(/[_\s]/g,'').toUpperCase()===n.replace(/[_\s]/g,'').toUpperCase()
+            );
+            if (f) return f;
+          }
+          return null;
+        }
+        const sStt = fc2('STT');
+        const sNhom = fc2('NHÓM','NHOM','TÊN NHÓM','TEN NHOM');
+        const sHd = fc2('HOÁ ĐƠN','HOA DON','HÓA ĐƠN','HOADON');
+        const sKh = fc2('KHÁCH HÀNG','KHACH HANG','KHACHHANG');
+        const sTien = fc2('TIỀN NỢ','TIEN NO','TIENNO','TIEN_NỢ');
+        summaryData = rows2.map(r => ({
+          stt: String(r[sStt]||'').trim(),
+          ten_nhom: String(r[sNhom]||'').trim(),
+          hoa_don: parseVnNumber(r[sHd]),
+          khach_hang: parseVnNumber(r[sKh]),
+          tien_no: parseVnNumber(r[sTien]),
+        })).filter(r => r.ten_nhom);
+        renderSummary();
+      }
+
+      initFilters(); updateStats(); applyFilters();
+      saveData();
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('dataView').style.display = 'block';
+    } catch(err) {
+      alert('Lỗi: ' + err.message);
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('welcomeState').style.display = 'block';
+    }
+  };
+  reader.onerror = function() {
+    alert('Không thể đọc file. Vui lòng thử lại.');
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('welcomeState').style.display = 'block';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── TAB SWITCHING ──
+let currentTab = 'detail';
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabDetail').classList.toggle('active', tab === 'detail');
+  document.getElementById('tabSummary').classList.toggle('active', tab === 'summary');
+  document.getElementById('detailView').style.display = tab === 'detail' ? 'block' : 'none';
+  document.getElementById('summaryView').style.display = tab === 'summary' ? 'block' : 'none';
+  document.getElementById('countDisplay').parentElement.style.display = tab === 'detail' ? 'block' : 'none';
+}
+
+// ── COMPUTE SUMMARY FROM DETAIL (Sheet 1) ──
+function computeSummaryFromDetail() {
+  const map = {};
+  allData.forEach(r => {
+    const nv = r.nhan_vien || r.ma_nhom || 'Không rõ';
+    if (!map[nv]) map[nv] = { ten_nhom: nv, hoa_don: 0, khach_hang: new Set(), tien_no: 0 };
+    map[nv].hoa_don++;
+    map[nv].khach_hang.add(r.ma_khach_hang);
+    map[nv].tien_no += r.tien_no;
+  });
+  summaryData = Object.values(map)
+    .map((r, i) => ({ stt: i + 1, ten_nhom: r.ten_nhom, hoa_don: r.hoa_don, khach_hang: r.khach_hang.size, tien_no: r.tien_no }))
+    .sort((a, b) => b.tien_no - a.tien_no);
+  summaryData.forEach((r, i) => r.stt = i + 1);
+  renderSummary();
+}
+
+// ── SORT SUMMARY ──
+let sumSortCol = 'tien_no', sumSortDir = -1;
+function sortSummary(col) {
+  if (sumSortCol === col) sumSortDir *= -1; else { sumSortCol = col; sumSortDir = col === 'ten_nhom' ? 1 : -1; }
+  summaryData.sort((a, b) => {
+    let av = a[col], bv = b[col];
+    if (typeof av === 'string') return av.localeCompare(bv, 'vi') * sumSortDir;
+    return (av - bv) * sumSortDir;
+  });
+  summaryData.forEach((r, i) => r.stt = i + 1);
+  document.querySelectorAll('.sa-sum').forEach(el => {
+    const c = el.dataset.col;
+    el.textContent = c === sumSortCol ? (sumSortDir === 1 ? '↑' : '↓') : '↕';
+    el.closest('th').classList.toggle('sorted', c === sumSortCol);
+  });
+  renderSummaryBody();
+}
+
+// ── RENDER SUMMARY (Sheet 2) ──
+function renderSummary() {
+  if (summaryData.length && sumSortCol === 'tien_no' && sumSortDir === -1) {
+    summaryData.sort((a, b) => b.tien_no - a.tien_no);
+    summaryData.forEach((r, i) => r.stt = i + 1);
+  }
+  renderSummaryBody();
+}
+
+function renderSummaryBody() {
+  const tbody = document.getElementById('summaryBody');
+  const tfoot = document.getElementById('summaryFoot');
+  if (!summaryData.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px">Không có dữ liệu sheet 2</td></tr>'; tfoot.style.display = 'none'; return; }
+  let totalHd = 0, totalKh = 0, totalTien = 0;
+  tbody.innerHTML = summaryData.map((r, i) => {
+    totalHd += r.hoa_don;
+    totalKh += r.khach_hang;
+    totalTien += r.tien_no;
+    return `<tr>
+      <td class="ten-nv-cell">${esc(r.ten_nhom)}</td>
+      <td class="num-cell">${r.hoa_don.toLocaleString('vi-VN')}</td>
+      <td class="num-cell">${r.khach_hang.toLocaleString('vi-VN')}</td>
+      <td class="tien-no-cell" style="text-align:right">${fmt(r.tien_no)}</td>
+    </tr>`;
+  }).join('');
+  tfoot.style.display = '';
+  document.getElementById('sumTotalHd').textContent = totalHd.toLocaleString('vi-VN');
+  document.getElementById('sumTotalKh').textContent = totalKh.toLocaleString('vi-VN');
+  document.getElementById('sumTotalTien').textContent = fmt(totalTien);
+}
+
+function initFilters() {
+  const nhomSet = [...new Set(allData.map(r=>r.ma_nhom).filter(Boolean))].sort();
+  const nhomSel = document.getElementById('filterNhom');
+  nhomSel.innerHTML = '<option value="">📁 Tất cả các nhóm</option>';
+  nhomSet.forEach(v => { const o=document.createElement('option'); o.value=v; o.textContent='👤 ' + v; nhomSel.appendChild(o); });
+}
+
+function updateStats() {
+  const nhom = document.getElementById('filterNhom').value;
+  // Mirror applyFilters: apply group AND employee scope together
+  const src = allData.filter(r => (!nhom || r.ma_nhom === nhom) && (!nvScope || r.nhan_vien === nvScope));
+  const total = src.length;
+  const unique = new Set(src.map(r=>r.ma_khach_hang)).size;
+  const tongNo = src.reduce((s,r)=>s+r.tien_no,0);
+  document.getElementById('statTotal').textContent = total.toLocaleString('vi-VN');
+  document.getElementById('statTongNo').textContent = fmt(tongNo);
+  document.getElementById('statUnique').textContent = unique.toLocaleString('vi-VN');
+  document.getElementById('countTotal').textContent = total.toLocaleString('vi-VN');
+  // Scope banner removed - always hidden
+  const scope = document.getElementById('nvScope');
+  scope.style.display = 'none';
+}
+
+function handleSearch() {
+  currentPage = 1;
+  applyFilters();
+  // Collapse the stats section when searching to free up space for results
+  const searching = document.getElementById('searchInput').value.trim().length > 0;
+  document.querySelector('.stats-row').classList.toggle('collapsed', searching);
+  document.getElementById('nvScope').classList.toggle('collapsed', searching);
+}
+function handleFilter() { currentPage=1; applyFilters(); }
+
+function applyFilters() {
+  const q = normVn(document.getElementById('searchInput').value);
+  const nhom = document.getElementById('filterNhom').value;
+
+  filtered = allData.filter(r => {
+    if (nhom && r.ma_nhom !== nhom) return false;
+    if (nvScope && r.nhan_vien !== nvScope) return false;
+    if (q) {
+      const hay = normVn(r.stt+r.ma_khach_hang+r.ten_khach_hang+r.dia_chi+r.ma_sogcs+r.danh_so+r.dien_thoai+r.thang_no+r.so_tbi+r.ghi_chu+r.nhan_vien);
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  filtered.sort((a,b) => {
+    let av=a[sortCol], bv=b[sortCol];
+    if (sortCol==='stt'||sortCol==='danh_so'||sortCol==='so_tbi') { const an=parseFloat(av)||0, bn=parseFloat(bv)||0; return (an-bn)*sortDir; }
+    if (sortCol==='thang_no') {
+      // Parse month strings like '1-7/2026', '08/2026', '8/2026' → Date for proper chronological sort
+      const parseM = s => { if (!s) return 0; const m = String(s).match(/(\d+)(?:[-\/](?:\d+[-\/])?)?(\d{4})/); return m ? new Date(+m[2], +m[1]-1).getTime() : 0; };
+      return (parseM(av)-parseM(bv))*sortDir;
+    }
+    if (typeof av==='number') return (av-bv)*sortDir;
+    return String(av).localeCompare(String(bv),'vi')*sortDir;
+  });
+
+  document.getElementById('countDisplay').textContent = filtered.length.toLocaleString('vi-VN');
+  const q2 = document.getElementById('searchInput').value.trim();
+  renderCards(q2);
+  renderTable(q2);
+  renderPagination();
+  updateStats();
+}
+
+function sortBy(col) {
+  if (sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=-1; }
+  document.querySelectorAll('.sa').forEach(el => {
+    const c = el.dataset.col;
+    el.textContent = c===sortCol ? (sortDir===1?'↑':'↓') : '↕';
+    el.closest('th').classList.toggle('sorted', c===sortCol);
+  });
+  updateSortButtons();
+  currentPage=1; applyFilters();
+}
+
+// Sync the two quick sort buttons with the current sort state
+function updateSortButtons() {
+  const map = { 'danh_so':'sortDanhSo', 'tien_no':'sortTienNo', 'thang_no':'sortThang' };
+  Object.entries(map).forEach(([col, id]) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    const arrow = btn.querySelector('.sort-arrow');
+    const active = sortCol===col;
+    btn.classList.toggle('active', active);
+    arrow.textContent = active ? (sortDir===1?'↑':'↓') : '↕';
+  });
+}
+updateSortButtons();
+
+
+
+// CARDS (mobile)
+function renderCards(q='') {
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageData = filtered.slice(start, start+PAGE_SIZE);
+  const list = document.getElementById('cardList');
+  const empty = document.getElementById('emptyStateCard');
+
+  if (filtered.length===0) { list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  list.innerHTML = pageData.map((r,i) => {
+    const phone = r.dien_thoai && r.dien_thoai!='0' ? r.dien_thoai : '';
+    return `<div class="kh-card" onclick="showDetail(${start+i})" onpointerdown="longPressStart(event, this)" onpointerup="longPressEnd(this)" onpointerleave="longPressEnd(this)" onpointercancel="longPressEnd(this)">
+      <div class="kh-card-top">
+        <div class="kh-name">${hi(r.ten_khach_hang,q)||'—'}</div>
+        <div class="kh-tien-col">
+          <div class="kh-tien">${fmt(r.tien_no)}₫</div>
+          ${r.thang_no ? `<div class="kh-thang">📅 ${hi(r.thang_no,q)}</div>` : ''}
+        </div>
+      </div>
+      <div class="kh-card-mid">
+        ${r.danh_so ? `<span class="badge badge-blue badge-danhso">${hi(r.danh_so,q)}</span>` : ''}
+        <span class="kh-ma">${hi(r.ma_khach_hang,q)}</span>
+        ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">📞 ${hi(phone,q)}</a>` : ''}
+      </div>
+      ${r.dia_chi ? `<div class="kh-addr-line">📍 ${hi(r.dia_chi,q)}</div>` : ''}
+      ${r.ghi_chu ? `<div class="kh-addr-line">📝 ${hi(r.ghi_chu,q)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// TABLE (desktop)
+function renderTable(q='') {
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageData = filtered.slice(start, start+PAGE_SIZE);
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyStateTable');
+
+  if (filtered.length===0) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  tbody.innerHTML = pageData.map((r,i) => {
+    const bc = getBadge(r.ma_nhom);
+    return `<tr onclick="showDetail(${start+i})">
+      <td style="color:var(--text-dim);font-size:12px;white-space:nowrap">${r.stt ? hi(r.stt,q) : (start+i+1)}</td>
+      <td><span class="ma-kh">${hi(r.ma_khach_hang,q)}</span></td>
+      <td class="ten-kh">${hi(r.ten_khach_hang,q)||'—'}</td>
+      <td class="cell-addr">${hi(r.dia_chi,q)||'—'}</td>
+      <td class="cell-dim">${hi(r.ma_sogcs,q)||'—'}</td>
+      <td class="cell-dim">${hi(r.danh_so,q)||'—'}</td>
+      <td><span class="badge badge-blue">${hi(r.thang_no,q)||'—'}</span></td>
+      <td><span class="tien-no">${fmt(r.tien_no)} ₫</span></td>
+      <td><span class="phone">${r.dien_thoai&&r.dien_thoai!='0' ? hi(r.dien_thoai,q) : '<span style="color:var(--text-dim)">—</span>'}</span></td>
+      <td class="cell-dim">${hi(r.so_tbi,q)||'—'}</td>
+      <td class="cell-ghi">${hi(r.ghi_chu,q)||'—'}</td>
+      <td><span class="badge ${bc}">${hi(r.ma_nhom,q)||'—'}</span></td>
+
+    </tr>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const total = Math.ceil(filtered.length/PAGE_SIZE);
+  const s = (currentPage-1)*PAGE_SIZE+1;
+  const e = Math.min(currentPage*PAGE_SIZE, filtered.length);
+  const infoText = filtered.length ? `${s.toLocaleString()}–${e.toLocaleString()} / ${filtered.length.toLocaleString()}` : '';
+
+  ['Card','Table'].forEach(suffix => {
+    document.getElementById('pageInfo'+suffix).textContent = infoText;
+    let html = `<button class="page-btn" onclick="goPage(1)" ${currentPage===1?'disabled':''} title="Trang đầu">«</button>`;
+    html += `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''} title="Trang trước">‹</button>`;
+    let pages = [];
+    if (total<=5) pages = Array.from({length:total},(_,i)=>i+1);
+    else {
+      pages=[1];
+      if (currentPage>3) pages.push('...');
+      for (let p=Math.max(2,currentPage-1); p<=Math.min(total-1,currentPage+1); p++) pages.push(p);
+      if (currentPage<total-2) pages.push('...');
+      pages.push(total);
+    }
+    pages.forEach(p => {
+      if (p==='...') html+=`<span class="page-btn" style="cursor:default">…</span>`;
+      else html+=`<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    });
+    html+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''} title="Trang sau">›</button>`;
+    html+=`<button class="page-btn" onclick="goPage(${total})" ${currentPage===total?'disabled':''} title="Trang cuối">»</button>`;
+    document.getElementById('pageBtns'+suffix).innerHTML = html;
+    document.getElementById('pagination'+suffix).style.display = filtered.length>0 ? 'flex' : 'none';
+  });
+}
+
+function goPage(p) {
+  const total = Math.ceil(filtered.length/PAGE_SIZE);
+  if (p<1||p>total) return;
+  currentPage = p;
+  const q = document.getElementById('searchInput').value.trim();
+  renderCards(q); renderTable(q); renderPagination();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Long press handler
+let longPressTimer = null;
+function longPressStart(e, el) {
+  longPressTimer = setTimeout(() => {
+    el.classList.toggle('highlighted');
+    longPressTimer = null;
+  }, 2000);
+}
+function longPressEnd(el) {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+}
+
+function showDetail(idx) {
+  const r = filtered[idx];
+  if (!r) return;
+  document.getElementById('modalName').textContent = r.ten_khach_hang || 'Không có tên';
+  document.getElementById('modalMa').textContent = r.ma_khach_hang;
+
+  const phone = r.dien_thoai && r.dien_thoai!='0' ? r.dien_thoai : '';
+  const phoneHref = phone ? 'tel:' + phone.replace(/[^0-9+]/g, '') : '';
+  const phoneHtml = phone
+    ? `<a class="call-link" href="${esc(phoneHref)}">📞 ${esc(phone)}</a>`
+    : '—';
+
+  const rows = [
+    ['STT', esc(r.stt)||'—'],
+    ['Mã KH', `<span class="ma-kh" style="font-size:13px">${esc(r.ma_khach_hang)}</span>`],
+    ['Tên KH', esc(r.ten_khach_hang)],
+    ['Địa chỉ', esc(r.dia_chi)||'—'],
+    ['Mã Số GCS', esc(r.ma_sogcs)||'—'],
+    ['Danh Số', esc(r.danh_so)||'—'],
+    ['Tháng', r.thang_no ? `<span class="badge badge-blue">${esc(r.thang_no)}</span>` : '—'],
+    ['Tiền nợ', `<span class="tien-no" style="font-size:18px">${fmt(r.tien_no)} ₫</span>`],
+    ['SĐT', phoneHtml],
+    ['Số TBi', esc(r.so_tbi)||'—'],
+    ['Ghi chú', esc(r.ghi_chu)||'—'],
+    ['Nhóm', r.ma_nhom ? `<span class="badge ${getBadge(r.ma_nhom)}">${esc(r.ma_nhom)}</span>` : '—'],
+  ];
+
+  document.getElementById('modalBody').innerHTML = rows.map(([l,v]) =>
+    `<div class="info-row"><div class="info-label">${l}</div><div class="info-value">${v}</div></div>`
+  ).join('');
+
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) { if (e.target===document.getElementById('modal')) closeModalDirect(); }
+function closeModalDirect() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── PER-EMPLOYEE STATS (click on an employee name) ──
+function showNvStats(idx) {
+  const r = filtered[idx];
+  if (!r || !r.nhan_vien) return;
+  nvScope = r.nhan_vien;
+  handleFilter();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Group filter replaces employee filter in the dropdown
+function handleNhomFilter() {
+  nvScope = '';
+  handleFilter();
+}
+
+function clearNvScope() {
+  nvScope = '';
+  document.getElementById('filterNhom').value = '';
+  handleFilter();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModalDirect(); });
+
+// Restore persisted data if available
+restoreData();
+
+// Sticky toolbar border when scrolled past header
+window.addEventListener('scroll', () => {
+  document.querySelector('.toolbar')?.classList.toggle('stuck', window.scrollY > 4);
+}, { passive: true });
+
+// Touch swipe down to close modal
+let touchStartY = 0;
+document.getElementById('modal').querySelector('.modal').addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
+document.getElementById('modal').querySelector('.modal').addEventListener('touchend', e => {
+  if (e.changedTouches[0].clientY - touchStartY > 80) closeModalDirect();
+});
+</script>
+</body>
+</html>
