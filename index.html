@@ -187,10 +187,10 @@ body {
   line-height: 1.1;
 }
 .stat-value-row { display: flex; align-items: baseline; gap: 7px; min-width: 0; justify-content: center; }
-.stat-value.blue { color: #5b9bd5; font-weight: 700; }
-.stat-value.gold { color: #d4a017; font-weight: 700; }
-.stat-value.red { color: #d96b6b; font-weight: 700; }
-.stat-value.green { color: #34c77b; font-weight: 700; }
+.stat-value.blue { color: #6baed6; font-weight: 700; }
+.stat-value.gold { color: #eab308; font-weight: 700; }
+.stat-value.red { color: #e07070; font-weight: 700; }
+.stat-value.green { color: #4ade80; font-weight: 700; }
 .stat-sub { font-size: 11px; font-weight: 600; color: var(--text-dim); white-space: nowrap; }
 
 /* Per-employee stats scope banner */
@@ -1525,7 +1525,7 @@ function longPressStart(e, el) {
   longPressTimer = setTimeout(() => {
     el.classList.toggle('highlighted');
     longPressTimer = null;
-  }, 2000);
+  }, 1000);
 }
 function longPressEnd(el) {
   if (longPressTimer) {
