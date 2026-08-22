@@ -1566,7 +1566,7 @@ function renderCards(q='') {
         ${r.ma_khach_hang && phone ? `<span class="kh-sep">-</span>` : ''}
         ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">📞 ${hi(phone,q)}</a>` : ''}
         ${phone && r.ghi_chu ? `<span class="kh-sep">-</span>` : ''}
-        ${r.ghi_chu ? `<span class="kh-ghichu">📝 ${hi(r.ghi_chu,q)}</span>` : ''}
+        ${r.ghi_chu ? `<span class="kh-ghichu">${hi(r.ghi_chu,q)}</span>` : ''}
       </div>
       ${r.dia_chi ? `<div class="kh-addr-line">📍 ${hi(r.dia_chi,q)}</div>` : ''}
     </div>`;
@@ -1738,12 +1738,12 @@ function saveGhiChu(input) {
   if (card) {
     const gcEl = card.querySelector('.kh-ghichu');
     if (val) {
-      if (gcEl) { gcEl.innerHTML = '📝 ' + hi(val); }
+      if (gcEl) { gcEl.innerHTML = hi(val); }
       else {
         const phoneEl = card.querySelector('.kh-phone');
         const span = document.createElement('span');
         span.className = 'kh-ghichu';
-        span.innerHTML = '📝 ' + hi(val);
+        span.innerHTML = hi(val);
         if (phoneEl) phoneEl.parentNode.insertBefore(span, null);
         else card.querySelector('.kh-card-mid')?.appendChild(span);
       }
