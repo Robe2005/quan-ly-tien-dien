@@ -413,7 +413,7 @@ thead th {
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: #3b82f6;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
   cursor: pointer;
@@ -421,8 +421,8 @@ thead th {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-thead th:hover { color: var(--text); }
-thead th.sorted { color: var(--accent-glow); }
+thead th:hover { color: #60a5fa; }
+thead th.sorted { color: var(--accent-glow); border-bottom: 2px solid #3b82f6; }
 
 tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; cursor: pointer; }
 tbody tr:last-child { border-bottom: none; }
@@ -437,7 +437,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 .tien-no { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #ffa0a0; white-space: nowrap; }
 .tien-no.low { color: #4ade80; }
 .tien-no.mid { color: #fde68a; }
-.phone { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-dim); }
+.phone { font-family: 'Inter', sans-serif; font-size: 11px; color: #ffffff; }
 .cell-dim { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
 .cell-addr { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell-ghi { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1731,7 +1731,7 @@ function saveGhiChu(input) {
   localStorage.setItem('qlno_notes', JSON.stringify(notes));
   // Update allData
   allData.forEach(r => { if (r.ma_khach_hang === ma) r.ghi_chu = val; });
-  // Live update the card's ghi chú display
+  // Live update the card's ghi chú display (mobile)
   const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(ma)}"]`);
   if (card) {
     const gcEl = card.querySelector('.kh-ghichu');
@@ -1749,6 +1749,9 @@ function saveGhiChu(input) {
       gcEl.remove();
     }
   }
+  // Live sync: update desktop table input if editing from mobile, or vice versa
+  document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
+  document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
 }
 function loadGhiChu() {
   let notes = {};
