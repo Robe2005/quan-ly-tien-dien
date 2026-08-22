@@ -340,7 +340,7 @@ body {
 .kh-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
 .kh-danhso-row { display: flex; gap: 6px; align-items: center; margin-bottom: 4px; }
 .kh-danhso { font-size: 12px; color: var(--accent-glow); font-weight: 600; }
-.kh-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
+.kh-name { font-size: 14px; font-weight: 700; flex: 1; line-height: 1.3; color: #ffffff; }
 .kh-tien-col { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
 .kh-tien { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #ffa0a0; white-space: nowrap; flex-shrink: 0; }
 .kh-tien.low { color: #4ade80; }
@@ -357,8 +357,8 @@ body {
 .kh-card-mid .badge-danhso { background: rgba(59,130,246,0.15); color: #fff; }
 .kh-ma-line .badge-danhso { font-size: 11px; padding: 3px 10px; color: #fff; border: none !important; box-shadow: none !important; }
 .kh-sep { font-size: 12px; color: var(--text-dim); font-weight: 400; }
-.kh-ghichu { font-size: 12px; color: #ffffff; font-weight: 500; white-space: nowrap; }
-.ghi-chu-input { background: rgba(71,85,105,0.35); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif; width: 100%; outline: none; }
+.kh-ghichu { font-size: 11px; color: #ffffff; font-weight: 500; white-space: nowrap; border: 1px solid rgba(253,186,116,0.25); border-radius: 3px; padding: 0px 4px; }
+.ghi-chu-input { background: rgba(71,85,105,0.35); border: 1.5px solid #fdba74; border-radius: 6px; padding: 6px 10px; color: var(--text); font-size: 13px; font-family: 'Inter', sans-serif; width: 100%; outline: none; }
 .ghi-chu-input:not(:placeholder-shown) { color: #4ade80; }
 .ghi-chu-input:focus { border-color: var(--accent); }
 
@@ -431,7 +431,7 @@ tbody tr:active { background: rgba(59,130,246,0.50); }
 
 tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.ma-kh { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--accent-glow); font-weight: 500; }
+.ma-kh { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent-glow); font-weight: 500; }
 .ten-kh { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ten-kh small { display: block; font-size: 10px; color: var(--text-dim); font-weight: 400; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tien-no { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #ffa0a0; white-space: nowrap; }
@@ -441,7 +441,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 .cell-dim { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
 .cell-addr { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell-ghi { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ghi-chu-table { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 2px 6px; color: var(--text-dim); font-size: 12px; font-family: 'Inter', sans-serif; width: 100%; min-width: 120px; outline: none; }
+.ghi-chu-table { background: transparent; border: 1px solid rgba(253,186,116,0.25); border-radius: 4px; padding: 2px 6px; color: var(--text-dim); font-size: 12px; font-family: 'Inter', sans-serif; width: 100%; min-width: 120px; outline: none; }
 .ghi-chu-table:not(:placeholder-shown) { color: #4ade80; }
 .ghi-chu-table:focus { border-color: var(--accent); background: rgba(71,85,105,0.35); }
 .ghi-chu-table::placeholder { color: var(--text-dim); opacity: 0.5; }
