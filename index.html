@@ -352,7 +352,7 @@ body {
 .kh-card-mid { display: flex; gap: 6px; flex-wrap: nowrap; margin-bottom: 5px; align-items: center; overflow: hidden; }
 .kh-ma { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent-glow); font-weight: 500; white-space: nowrap; }
 .kh-sogcs { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
-.kh-phone { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; text-decoration: none; white-space: nowrap; }
+.kh-phone { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; text-decoration: none; white-space: nowrap; } .kh-phone::before { content: '📞 '; color: #ef4444; }
 .kh-card-mid .badge { font-size: 12px; font-weight: 500; white-space: nowrap; }
 .kh-card-mid .badge-danhso { background: rgba(59,130,246,0.15); color: #fff; }
 .kh-ma-line .badge-danhso { font-size: 11px; padding: 3px 10px; color: #fff; border: none !important; box-shadow: none !important; }
@@ -827,16 +827,13 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
       </div>
         <div class="sort-row">
           <button class="sort-btn" id="sortDanhSo" onclick="sortBy('danh_so')">
-            <span class="sort-label">🔢 Danh số</span><span class="sort-arrow">↕</span>
-          </button>
-          <button class="sort-btn" id="sortSoGCS" onclick="sortBy('ma_sogcs')">
-            <span class="sort-label">🔢 Mã Sổ</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">📝 Danh số</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortTienNo" onclick="sortBy('tien_no')">
             <span class="sort-label">💰 Tiền nợ</span><span class="sort-arrow">↕</span>
           </button>
-          <button class="sort-btn" id="sortThang" onclick="sortBy('thang_no')">
-            <span class="sort-label">📅 Tháng</span><span class="sort-arrow">↕</span>
+          <button class="sort-btn" id="sortSoGCS" onclick="sortBy('ma_sogcs')">
+            <span class="sort-label">🔢 Mã Sổ</span><span class="sort-arrow">↕</span>
           </button>
         </div>
       </div>
@@ -1564,7 +1561,7 @@ function renderCards(q='') {
       <div class="kh-card-mid">
         <span class="kh-ma">${hi(r.ma_khach_hang,q)}</span>
         ${r.ma_khach_hang && phone ? `<span class="kh-sep">-</span>` : ''}
-        ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">📞 ${hi(phone,q)}</a>` : ''}
+        ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">${hi(phone,q)}</a>` : ''}
         ${phone && r.ghi_chu ? `<span class="kh-sep">-</span>` : ''}
         ${r.ghi_chu ? `<span class="kh-ghichu">${hi(r.ghi_chu,q)}</span>` : ''}
       </div>
