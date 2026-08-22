@@ -352,7 +352,7 @@ body {
 .kh-card-mid { display: flex; gap: 6px; flex-wrap: nowrap; margin-bottom: 5px; align-items: center; overflow: hidden; }
 .kh-ma { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--accent-glow); font-weight: 500; white-space: nowrap; }
 .kh-sogcs { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
-.kh-phone { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; text-decoration: none; white-space: nowrap; } .kh-phone::before { content: '📞 '; color: #ef4444; }
+.kh-phone { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-dim); font-weight: 500; text-decoration: none; white-space: nowrap; } .kh-phone .phone-icon { color: #ef4444; margin-right: 2px; font-style: normal; }
 .kh-card-mid .badge { font-size: 12px; font-weight: 500; white-space: nowrap; }
 .kh-card-mid .badge-danhso { background: rgba(59,130,246,0.15); color: #fff; }
 .kh-ma-line .badge-danhso { font-size: 11px; padding: 3px 10px; color: #fff; border: none !important; box-shadow: none !important; }
@@ -752,7 +752,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
     </div>
   </div>
   <button class="upload-btn-header" onclick="document.getElementById('fileInput').click()">
-    <span style="color:#3b82f6">📂</span> Chọn file
+    <span style="color:#3b82f6">📂</span> Chọn File
   </button>
   <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileUpload(this)">
 </div>
@@ -766,8 +766,8 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
     <p>Nhập danh sách nợ khách hàng từ file Excel để xem và tìm kiếm</p>
     <div class="upload-zone-mobile" onclick="document.getElementById('fileInput').click()">
       <p>📥 Hỗ trợ .xlsx · .xls · .csv</p>
-      <button class="big-upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
-        📂 Chọn file Excel
+      <button class="big-upload-btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">📂 Chọn File
+ Excel
       </button>
     </div>
   </div>
@@ -820,17 +820,17 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
           </select>
         </div>
         <div class="tab-nav" id="tabNav">
-          <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi tiết nợ</button>
-          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ cũ,>2 HĐ</button>
-          <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng hợp nợ</button>
+          <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi Tiết Nợ</button>
+          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ Cũ,>2HĐ</button>
+          <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng Hợp Nợ</button>
         </div>
       </div>
         <div class="sort-row">
           <button class="sort-btn" id="sortDanhSo" onclick="sortBy('danh_so')">
-            <span class="sort-label">📝 Danh số</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">📝 Danh Số</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortTienNo" onclick="sortBy('tien_no')">
-            <span class="sort-label">💰 Tiền nợ</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">💰 Tiền Nợ</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortSoGCS" onclick="sortBy('ma_sogcs')">
             <span class="sort-label">🔢 Mã Sổ</span><span class="sort-arrow">↕</span>
@@ -1561,7 +1561,7 @@ function renderCards(q='') {
       <div class="kh-card-mid">
         <span class="kh-ma">${hi(r.ma_khach_hang,q)}</span>
         ${r.ma_khach_hang && phone ? `<span class="kh-sep">-</span>` : ''}
-        ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()">${hi(phone,q)}</a>` : ''}
+        ${phone ? `<a class="kh-phone" href="tel:${phone.replace(/[^0-9+]/g,'')}" onclick="event.stopPropagation()"><svg class='phone-icon' width='11' height='11' viewBox='0 0 24 24' fill='#ef4444' style='vertical-align:middle;margin-right:2px'><path d='M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.57.57a1 1 0 011 1V20a1 1 0 01-1 1C10.07 21 3 13.93 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z'/></svg> ${hi(phone,q)}</a>` : ''}
         ${phone && r.ghi_chu ? `<span class="kh-sep">-</span>` : ''}
         ${r.ghi_chu ? `<span class="kh-ghichu">${hi(r.ghi_chu,q)}</span>` : ''}
       </div>
