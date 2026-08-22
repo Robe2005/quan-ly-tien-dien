@@ -65,7 +65,7 @@ body {
   flex-shrink: 0;
 }
 
-.header-title { font-size: 14px; font-weight: 700; }
+.header-title { font-size: 16px; font-weight: 800; letter-spacing: 0.3px; }
 .header-sub { font-size: 10px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 
 .upload-btn-header {
@@ -288,7 +288,7 @@ body {
 }
 
 /* Sort quick-buttons */
-.sort-row { display: flex; gap: 4px; margin-top: 2px; }
+.sort-row { display: flex; gap: 6px; margin-top: 2px; }
 .sort-btn {
   flex: 1;
   display: flex;
@@ -298,16 +298,17 @@ body {
   background: rgba(71,85,105,0.35);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 6px 4px;
+  padding: 7px 4px;
   white-space: nowrap;
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  height: 32px;
 }
 .sort-btn .sort-arrow { font-size: 12px; color: var(--text-dim); }
 .sort-btn.active { border-color: #2563eb; background: #2563eb; color: #fff; }
@@ -499,12 +500,12 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 /* ── TAB NAVIGATION ────────────────────── */
 .tab-nav {
   display: flex;
-  gap: 4px;
-  padding: 3px;
+  gap: 6px;
+  padding: 0;
 }
 .tab-btn {
   flex: 1;
-  padding: 6px 6px;
+  padding: 7px 4px;
   border: 1px solid transparent;
   border-radius: 8px;
   background: rgba(51,65,85,0.4);
@@ -516,8 +517,14 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
   transition: all 0.2s;
   white-space: nowrap;
   min-width: 0;
+  text-align: center;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .tab-btn.active {
   background: rgba(30,64,175,0.15);
@@ -783,7 +790,7 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
 
     <!-- Stats -->
     <!-- Stats -->
-    <div class="stats-row">
+    <div class="stats-row" style="display:none">
       <div class="stat-card">
         <div class="stat-label">Tổng nợ</div>
         <div class="stat-value-row">
@@ -820,20 +827,24 @@ mark { background: rgba(251,191,36,0.3); color: #fde68a; border-radius: 2px; pad
           </select>
         </div>
         <div class="tab-nav" id="tabNav">
-          <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">📋 Chi Tiết Nợ</button>
-          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">📋 Nợ Cũ,>2HĐ</button>
-          <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">📊 Tổng Hợp Nợ</button>
+          <button class="tab-btn active" onclick="switchTab('detail')" id="tabDetail">Chi Tiết</button>
+          <button class="tab-btn" onclick="switchTab('high')" id="tabHigh">Nợ ≥2 Triệu</button>
+          <button class="tab-btn" onclick="switchTab('old')" id="tabOld">Nợ Cũ, ≥2HĐ</button>
+          <button class="tab-btn" onclick="switchTab('summary')" id="tabSummary">Tổng Hợp</button>
         </div>
       </div>
         <div class="sort-row">
           <button class="sort-btn" id="sortDanhSo" onclick="sortBy('danh_so')">
-            <span class="sort-label">📝 Danh Số</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">🔢 Danh Số</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortTienNo" onclick="sortBy('tien_no')">
             <span class="sort-label">💰 Tiền Nợ</span><span class="sort-arrow">↕</span>
           </button>
           <button class="sort-btn" id="sortSoGCS" onclick="sortBy('ma_sogcs')">
-            <span class="sort-label">🔢 Mã Sổ</span><span class="sort-arrow">↕</span>
+            <span class="sort-label">📋 Mã Sổ</span><span class="sort-arrow">↕</span>
+          </button>
+          <button class="sort-btn" id="sortTenKH" onclick="sortBy('ten_khach_hang')">
+            <span class="sort-label">👤 Tên KH</span><span class="sort-arrow">↕</span>
           </button>
         </div>
       </div>
@@ -1331,10 +1342,12 @@ function switchTab(tab) {
   document.getElementById('tabDetail').classList.toggle('active', tab === 'detail');
   document.getElementById('tabSummary').classList.toggle('active', tab === 'summary');
   document.getElementById('tabOld').classList.toggle('active', tab === 'old');
-  document.getElementById('detailView').style.display = tab === 'detail' ? 'block' : 'none';
+  document.getElementById('tabHigh').classList.toggle('active', tab === 'high');
+  const showDetail = (tab === 'detail' || tab === 'high');
+  document.getElementById('detailView').style.display = showDetail ? 'block' : 'none';
   document.getElementById('summaryView').style.display = tab === 'summary' ? 'block' : 'none';
   document.getElementById('oldView').style.display = tab === 'old' ? 'block' : 'none';
-  document.getElementById('countDisplay').parentElement.style.display = (tab === 'detail' || tab === 'old') ? 'block' : 'none';
+  document.getElementById('countDisplay').parentElement.style.display = (showDetail || tab === 'old') ? 'block' : 'none';
   currentPage = 1; applyFilters();
 }
 
@@ -1456,6 +1469,12 @@ function applyFilters() {
         if (!hasOther) return false;
       }
     }
+    if (currentTab === 'high') {
+      // Only include customers where total debt >= 2,000,000
+      // (either 1 invoice >= 2M, or multiple invoices summing to >= 2M)
+      const custTotal = allData.filter(x => x.ma_khach_hang === r.ma_khach_hang).reduce((s,x) => s + x.tien_no, 0);
+      if (custTotal < 2000000) return false;
+    }
     if (q) {
       const hay = normVn(r.stt+r.ma_khach_hang+r.ten_khach_hang+r.dia_chi+r.ma_sogcs+r.danh_so+r.dien_thoai+r.thang_no+r.so_tbi+r.ghi_chu+r.nhan_vien);
       if (!hay.includes(q)) return false;
@@ -1476,7 +1495,7 @@ function applyFilters() {
   });
 
   // Group by ma_khach_hang in detail tab: sum tien_no per customer
-  if (currentTab === 'detail') {
+  if (currentTab === 'detail' || currentTab === 'high') {
     const groupMap = {};
     const groupOrder = [];
     filtered.forEach(r => {
