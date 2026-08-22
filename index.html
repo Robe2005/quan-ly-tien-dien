@@ -395,15 +395,15 @@ table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 colgroup col:nth-child(1) { width: 3%; }  /* STT */
 colgroup col:nth-child(2) { width: 10%; } /* Mã KH */
 colgroup col:nth-child(3) { width: 20%; } /* Tên KH */
-colgroup col:nth-child(4) { width: 18%; } /* Địa chỉ */
+colgroup col:nth-child(4) { width: 12%; } /* Địa chỉ */
 colgroup col:nth-child(5) { width: 9%; }  /* Mã Số GCS */
 colgroup col:nth-child(6) { width: 7%; }  /* Danh Số */
 colgroup col:nth-child(7) { width: 7%; }  /* Tháng */
 colgroup col:nth-child(8) { width: 10%; } /* Tiền Nợ */
 colgroup col:nth-child(9) { width: 8%; }  /* SĐT */
 colgroup col:nth-child(10) { width: 6%; } /* Số TBi */
-colgroup col:nth-child(11) { width: 5%; } /* Ghi Chú */
-colgroup col:nth-child(12) { width: 6%; } /* Nhóm */
+colgroup col:nth-child(11) { width: 12%; } /* Ghi Chú */
+colgroup col:nth-child(12) { width: 3%; } /* Nhóm */
 
 thead th {
   background: rgba(255,255,255,0.04);
@@ -441,7 +441,7 @@ tbody td { padding: 10px 8px; font-size: 12px; vertical-align: middle; overflow:
 .cell-dim { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
 .cell-addr { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cell-ghi { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ghi-chu-table { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 2px 6px; color: var(--text-dim); font-size: 12px; font-family: 'Inter', sans-serif; width: 100%; min-width: 80px; outline: none; }
+.ghi-chu-table { background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 2px 6px; color: var(--text-dim); font-size: 12px; font-family: 'Inter', sans-serif; width: 100%; min-width: 120px; outline: none; }
 .ghi-chu-table:not(:placeholder-shown) { color: #4ade80; }
 .ghi-chu-table:focus { border-color: var(--accent); background: rgba(71,85,105,0.35); }
 .ghi-chu-table::placeholder { color: var(--text-dim); opacity: 0.5; }
@@ -1722,15 +1722,24 @@ function showDetail(idx) {
 }
 
 // Save/load ghi chú
+let _ghiChuSaveTimer = null;
+const API_BASE = window.location.origin;
 function saveGhiChu(input) {
   const ma = input.dataset.ma;
   const val = input.value;
+  // Update allData immediately
+  allData.forEach(r => { if (r.ma_khach_hang === ma) r.ghi_chu = val; });
+  // Save to localStorage (fallback)
   let notes = {};
   try { notes = JSON.parse(localStorage.getItem('qlno_notes') || '{}'); } catch(e) {}
   notes[ma] = val;
   localStorage.setItem('qlno_notes', JSON.stringify(notes));
-  // Update allData
-  allData.forEach(r => { if (r.ma_khach_hang === ma) r.ghi_chu = val; });
+  // Save to server API
+  fetch(API_BASE + '/api/notes', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ ma_khach_hang: ma, ghi_chu: val })
+  }).catch(() => {});
   // Live update the card's ghi chú display (mobile)
   const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(ma)}"]`);
   if (card) {
@@ -1752,14 +1761,100 @@ function saveGhiChu(input) {
   // Live sync: update desktop table input if editing from mobile, or vice versa
   document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
   document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
-  // Persist to main save so notes survive reload
-  saveData();
+  // Debounce save to main storage
+  clearTimeout(_ghiChuSaveTimer);
+  _ghiChuSaveTimer = setTimeout(() => { saveData(); }, 500);
 }
 function loadGhiChu() {
   let notes = {};
   try { notes = JSON.parse(localStorage.getItem('qlno_notes') || '{}'); } catch(e) {}
-  allData.forEach(r => { if (notes[r.ma_khach_hang]) r.ghi_chu = notes[r.ma_khach_hang]; });
+  allData.forEach(r => { if (notes[r.ma_khach_hang] !== undefined) r.ghi_chu = notes[r.ma_khach_hang]; });
+  // Sync desktop table inputs with loaded data
+  allData.forEach(r => {
+    document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+    document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+  });
+  // Load from server API
+  fetch(API_BASE + '/api/notes').then(r => r.json()).then(serverNotes => {
+    allData.forEach(r => {
+      if (serverNotes[r.ma_khach_hang] !== undefined) r.ghi_chu = serverNotes[r.ma_khach_hang];
+    });
+    allData.forEach(r => {
+      document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+      document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+    });
+    // Update card displays
+    allData.forEach(r => {
+      const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
+      if (card) {
+        const gcEl = card.querySelector('.kh-ghichu');
+        if (r.ghi_chu) {
+          if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
+        } else if (gcEl) {
+          gcEl.remove();
+        }
+      }
+    });
+  }).catch(() => {});
 }
+// Sync ghi chú across tabs/devices via storage event
+window.addEventListener('storage', function(e) {
+  if (e.key === 'qlno_notes' && e.newValue) {
+    let notes = {};
+    try { notes = JSON.parse(e.newValue); } catch(err) {}
+    allData.forEach(r => {
+      if (notes[r.ma_khach_hang] !== undefined) r.ghi_chu = notes[r.ma_khach_hang];
+    });
+    // Update desktop table inputs
+    allData.forEach(r => {
+      document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+      document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+    });
+    // Update mobile card displays
+    allData.forEach(r => {
+      const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
+      if (card) {
+        const gcEl = card.querySelector('.kh-ghichu');
+        if (r.ghi_chu) {
+          if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
+        } else if (gcEl) {
+          gcEl.remove();
+        }
+      }
+    });
+  }
+});
+// Polling: check for changes from server every 3 seconds
+setInterval(() => {
+  if (!allData.length) return;
+  fetch(API_BASE + '/api/notes').then(r => r.json()).then(serverNotes => {
+    allData.forEach(r => {
+      if (serverNotes[r.ma_khach_hang] !== undefined && serverNotes[r.ma_khach_hang] !== r.ghi_chu) {
+        r.ghi_chu = serverNotes[r.ma_khach_hang];
+        // Update desktop table inputs
+        document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+        document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
+        // Update mobile card displays
+        const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
+        if (card) {
+          const gcEl = card.querySelector('.kh-ghichu');
+          if (r.ghi_chu) {
+            if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
+            else {
+              const phoneEl = card.querySelector('.kh-phone');
+              const span = document.createElement('span');
+              span.className = 'kh-ghichu';
+              span.innerHTML = '📝 ' + hi(r.ghi_chu);
+              if (phoneEl) phoneEl.parentNode.insertBefore(span, null);
+            }
+          } else if (gcEl) {
+            gcEl.remove();
+          }
+        }
+      }
+    });
+  }).catch(() => {});
+}, 3000);
 
 function closeModal(e) { if (e.target===document.getElementById('modal')) closeModalDirect(); }
 function closeModalDirect() {
