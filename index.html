@@ -1751,9 +1751,9 @@ function saveGhiChu(input) {
   // Live sync: update desktop table input if editing from mobile, or vice versa
   document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
   document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
-  // Debounce save to main storage
+  // Debounce save to main storage + re-render cards
   clearTimeout(_ghiChuSaveTimer);
-  _ghiChuSaveTimer = setTimeout(() => { saveData(); }, 500);
+  _ghiChuSaveTimer = setTimeout(() => { saveData(); renderCards(document.getElementById('searchInput').value.trim()); }, 300);
 }
 function loadGhiChu() {
   let notes = {};
