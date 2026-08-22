@@ -1752,6 +1752,8 @@ function saveGhiChu(input) {
   // Live sync: update desktop table input if editing from mobile, or vice versa
   document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
   document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(ma)}"]`).forEach(el => { if (el !== input) el.value = val; });
+  // Persist to main save so notes survive reload
+  saveData();
 }
 function loadGhiChu() {
   let notes = {};
