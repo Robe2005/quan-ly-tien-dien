@@ -1723,23 +1723,16 @@ function showDetail(idx) {
 
 // Save/load ghi chú
 let _ghiChuSaveTimer = null;
-const API_BASE = window.location.origin;
 function saveGhiChu(input) {
   const ma = input.dataset.ma;
   const val = input.value;
   // Update allData immediately
   allData.forEach(r => { if (r.ma_khach_hang === ma) r.ghi_chu = val; });
-  // Save to localStorage (fallback)
+  // Save to localStorage
   let notes = {};
   try { notes = JSON.parse(localStorage.getItem('qlno_notes') || '{}'); } catch(e) {}
   notes[ma] = val;
   localStorage.setItem('qlno_notes', JSON.stringify(notes));
-  // Save to server API
-  fetch(API_BASE + '/api/notes', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ ma_khach_hang: ma, ghi_chu: val })
-  }).catch(() => {});
   // Live update the card's ghi chú display (mobile)
   const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(ma)}"]`);
   if (card) {
@@ -1774,87 +1767,8 @@ function loadGhiChu() {
     document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
     document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
   });
-  // Load from server API
-  fetch(API_BASE + '/api/notes').then(r => r.json()).then(serverNotes => {
-    allData.forEach(r => {
-      if (serverNotes[r.ma_khach_hang] !== undefined) r.ghi_chu = serverNotes[r.ma_khach_hang];
-    });
-    allData.forEach(r => {
-      document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-      document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-    });
-    // Update card displays
-    allData.forEach(r => {
-      const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
-      if (card) {
-        const gcEl = card.querySelector('.kh-ghichu');
-        if (r.ghi_chu) {
-          if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
-        } else if (gcEl) {
-          gcEl.remove();
-        }
-      }
-    });
-  }).catch(() => {});
+
 }
-// Sync ghi chú across tabs/devices via storage event
-window.addEventListener('storage', function(e) {
-  if (e.key === 'qlno_notes' && e.newValue) {
-    let notes = {};
-    try { notes = JSON.parse(e.newValue); } catch(err) {}
-    allData.forEach(r => {
-      if (notes[r.ma_khach_hang] !== undefined) r.ghi_chu = notes[r.ma_khach_hang];
-    });
-    // Update desktop table inputs
-    allData.forEach(r => {
-      document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-      document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-    });
-    // Update mobile card displays
-    allData.forEach(r => {
-      const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
-      if (card) {
-        const gcEl = card.querySelector('.kh-ghichu');
-        if (r.ghi_chu) {
-          if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
-        } else if (gcEl) {
-          gcEl.remove();
-        }
-      }
-    });
-  }
-});
-// Polling: check for changes from server every 3 seconds
-setInterval(() => {
-  if (!allData.length) return;
-  fetch(API_BASE + '/api/notes').then(r => r.json()).then(serverNotes => {
-    allData.forEach(r => {
-      if (serverNotes[r.ma_khach_hang] !== undefined && serverNotes[r.ma_khach_hang] !== r.ghi_chu) {
-        r.ghi_chu = serverNotes[r.ma_khach_hang];
-        // Update desktop table inputs
-        document.querySelectorAll(`.ghi-chu-table[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-        document.querySelectorAll(`.ghi-chu-input[data-ma="${CSS.escape(r.ma_khach_hang)}"]`).forEach(el => { el.value = r.ghi_chu || ''; });
-        // Update mobile card displays
-        const card = document.querySelector(`.kh-card[data-ma="${CSS.escape(r.ma_khach_hang)}"]`);
-        if (card) {
-          const gcEl = card.querySelector('.kh-ghichu');
-          if (r.ghi_chu) {
-            if (gcEl) gcEl.innerHTML = '📝 ' + hi(r.ghi_chu);
-            else {
-              const phoneEl = card.querySelector('.kh-phone');
-              const span = document.createElement('span');
-              span.className = 'kh-ghichu';
-              span.innerHTML = '📝 ' + hi(r.ghi_chu);
-              if (phoneEl) phoneEl.parentNode.insertBefore(span, null);
-            }
-          } else if (gcEl) {
-            gcEl.remove();
-          }
-        }
-      }
-    });
-  }).catch(() => {});
-}, 3000);
 
 function closeModal(e) { if (e.target===document.getElementById('modal')) closeModalDirect(); }
 function closeModalDirect() {
